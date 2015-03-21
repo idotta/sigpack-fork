@@ -52,7 +52,8 @@ namespace sp
         gnucmd = _popen("gnuplot -persist 2> NUL","w");
 #define GP_TERM "win"
 #elif defined(unix)
-        gnucmd = popen("gnuplot -persist &> /dev/null","w");
+//        gnucmd = popen("gnuplot -persist &> /dev/null","w");
+        gnucmd = popen("gnuplot -persist","w");
 #define GP_TERM "x11"
         //#elif defined(_APPLE_)
         //            gnucmd = popen("gnuplot -persist &> /dev/null","w");
