@@ -79,7 +79,7 @@ namespace sp
         }
         else
         {
-			arma::vec W(N);
+            arma::vec W(N);
             W = hamming(N);
             Pw.set_size(N,1);
             Pw = spectrum(x,W);

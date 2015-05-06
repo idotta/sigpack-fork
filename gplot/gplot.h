@@ -62,7 +62,7 @@ namespace sp
 #endif
         if(!gnucmd)
         {
-            std::cout << "Could not start gnuplot" << std::endl;
+            err_handler("Could not start gnuplot");
         }
         setvbuf(gnucmd, NULL, _IOLBF, 512);
 
@@ -186,9 +186,11 @@ namespace sp
     void gplot::plot( arma::vec &x, arma::vec &y, const std::string& label)
     {
         std::ostringstream tmp_s;
-        send2gp("set key noautotitle");
+//        send2gp("set key noautotitle");
         send2gp("set grid");
-        tmp_s << "plot '-' title \"" << label << "\" with " << linestyle;
+        send2gp("set nokey");
+//        tmp_s << "plot '-' title \"" << label << "\" with " << linestyle;
+        tmp_s << "plot '-' with " << linestyle;
         send2gp(tmp_s.str());
         plot_str2(x,y);
     }

@@ -41,6 +41,11 @@ namespace sp
     ///////////////////////////////////
     // p = angle(x)
     //      Calculates angle in radians for complex input
+    template <typename T>
+    double angle( std::complex<T> &x )
+    {
+        return std::arg(x);
+    }
     arma::mat angle( arma::cx_mat &x )
     {
         arma::mat P;
@@ -58,6 +63,23 @@ namespace sp
             P(r) = std::arg(x(r));
         return P;
     }
+
+    ///////////////////////////////////
+    // err_handler("Error string")
+    //      Prints an error message, waits for input and
+    //      then exits with error
+#define err_handler(msg) \
+    { \
+        std::cout << "SigPack Error [" << __FILE__  << "@" << __LINE__ << "]: " << msg << std::endl; \
+        std::cin.get(); \
+        exit(EXIT_FAILURE); \
+    }
+
+    ///////////////////////////////////
+    // wrn_handler("Warning string")
+    //      Prints an warning message
+#define wrn_handler(msg)  std::cout << "SigPack warning [" << __FILE__ << "@" << __LINE__ << "]: " << msg << std::endl;
+
 } // end namespace
 #endif
 

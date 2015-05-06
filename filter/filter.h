@@ -210,5 +210,47 @@ namespace sp
 
         return h;
     }
+
+    ///////////////////////////////////
+    // cx_vec = freq(b,a,[M])
+    //      Calculates the frequency response
+    //      b = [b0 .. Nb]
+    //      a = [1 a1 .. Na]
+    arma::cx_vec freq( const arma::vec b, const arma::vec a, const int M=512)
+    {
+        arma::cx_vec h(M);
+        int Nb = b.size();
+        int Na = a.size();
+        std::complex<double> b_tmp,a_tmp,i(0,1);
+        for(int m=0;m<M;m++)
+        {
+            b_tmp=std::complex<double>(b(0),0);
+            for(int nb=1;nb<Nb;nb++) 
+                b_tmp+= b(nb)*(cos(nb*PI*m/M)-i*sin(nb*PI*m/M));
+            a_tmp=std::complex<double>(a(0),0);
+            for(int na=1;na<Na;na++) 
+                a_tmp+= a(na)*(cos(na*PI*m/M)-i*sin(na*PI*m/M));
+            h(m) = b_tmp/a_tmp;
+        }
+        return h;
+    }
+
+    ///////////////////////////////////
+    // vec = freqz(b,a,[M])
+    //      Calculates the frequency magnitude response
+    arma::vec freqz( const arma::vec b, const arma::vec a, const int M=512)
+    {
+        arma::cx_vec f = freq(b,a,M);
+        return abs(f);
+    }
+
+    ///////////////////////////////////
+    // vec = phasez(b,a,[M])
+    //      Calculates the frequency phase response
+    arma::vec phasez( const arma::vec b, const arma::vec a, const int M=512)
+    {
+        arma::cx_vec f = freq(b,a,M);
+        return angle(f);
+    }
 } // end namespace
 #endif

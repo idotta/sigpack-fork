@@ -6,6 +6,8 @@
 //  1.01	Claes Rolén		2014-11-30	First version
 //  1.02	Claes Rolén		2015-01-11	Added 'angle','specgram','fd_filter','gplot'
 //                                      Changed file structure
+//  1.03	Claes Rolén		2015-04-26	Added 'parser' class, 'err_handler','wrn_handler'
+//                                      'freqz','phasez'
 
 
 #ifndef ARMA_INCLUDES
@@ -21,4 +23,5 @@
 #include "spectrum/spectrum.h"
 #include "timing/timing.h"
 #include "gplot/gplot.h"
+#include "parser/parser.h"
 #endif
