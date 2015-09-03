@@ -5,13 +5,21 @@
 #define SP_WINDOW_H
 namespace sp
 {   
-    //////////////////////////////////////////////////////////////////
-    // Windows
-    //////////////////////////////////////////////////////////////////
+    ///
+    /// @defgroup window Window
+    /// \brief Window functions.
+    ///
+    /// See window functions at [Wikipedia](https://en.wikipedia.org/wiki/Window_function)
+    /// @{
 
-    ///////////////////////////////////
-    // b = cos_win(N,a)
-    //      Generic fifth order symmetric cos window
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /// \brief Generic fifth order symmetric cos window.
+    ///
+    /// \f$ w_i = a_0-a_1\ cos(2\pi i /(N-1))+a_2\ cos(4\pi i /(N-1))-a_3\ cos(6\pi i /(N-1))+a_4\ cos(8\pi i /(N-1))\f$
+    /// @returns The cosinus window based on the <b>a</b> vector
+    /// @param N Number of window taps
+    /// @param a A vector of cosinus coefficients    
+    ////////////////////////////////////////////////////////////////////////////////////////////
     arma::vec cos_win( int N, arma::vec &a )
     {
         arma::vec h(N);
@@ -23,8 +31,12 @@ namespace sp
         return h;
     }
 
-    ///////////////////////////////////
-    // b = hamming(N)
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /// \brief Hamming window.
+    ///
+    /// \f$ w_i = 0.54-0.46\ cos(2\pi i /(N-1))\f$
+    /// @param N Nr of taps
+    ////////////////////////////////////////////////////////////////////////////////////////////
     arma::vec hamming( int N )
     {
         arma::vec a=arma::zeros<arma::vec>(5);
@@ -33,8 +45,12 @@ namespace sp
         return cos_win(N,a);
     }
 
-    ///////////////////////////////////
-    // b = hann(N)
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /// \brief Hann window.
+    ///
+    /// \f$ w_i = 0.5-0.5\ cos(2\pi i /(N-1))\f$
+    /// @param N Nr of taps
+    ////////////////////////////////////////////////////////////////////////////////////////////
     arma::vec hann( int N )
     {
         arma::vec a=arma::zeros<arma::vec>(5);
@@ -43,8 +59,12 @@ namespace sp
         return cos_win(N,a);
     }
 
-    ///////////////////////////////////
-    // b = blackman(N)
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /// \brief Blackman window.
+    ///
+    /// \f$ w_i = 0.42-0.5\ cos(2\pi i /(N-1))+0.08\ cos(4\pi i /(N-1))\f$
+    /// @param N Nr of taps
+    ////////////////////////////////////////////////////////////////////////////////////////////
     arma::vec blackman( int N )
     {
         arma::vec a=arma::zeros<arma::vec>(5);
@@ -54,9 +74,13 @@ namespace sp
         return cos_win(N,a);
     }
 
-    ///////////////////////////////////
-    // b = blackmanharris(N)
-    //      Symmetric BH4 window
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /// \brief Blackman-Harris window.
+    /// Symmetric BH4 window
+    ///
+    /// \f$ w_i = 0.359-0.488\ cos(2\pi i /(N-1))+0.141\ cos(4\pi i /(N-1))-0.011\ cos(6\pi i /(N-1))\f$
+    /// @param N Nr of taps
+    ////////////////////////////////////////////////////////////////////////////////////////////
     arma::vec blackmanharris( int N )
     {
         arma::vec a=arma::zeros<arma::vec>(5);
@@ -67,8 +91,12 @@ namespace sp
         return cos_win(N,a);
     }
 
-    ///////////////////////////////////
-    // b = flattopwin(N)
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /// \brief Flattop window.
+    ///
+    /// \f$ w_i = 0.216-0.417\ cos(2\pi i /(N-1))+0.277\ cos(4\pi i /(N-1))-0.084\ cos(6\pi i /(N-1))+0.007\ cos(8\pi i /(N-1))\f$
+    /// @param N Nr of taps
+    ////////////////////////////////////////////////////////////////////////////////////////////
     arma::vec flattopwin( int N )
     {
         arma::vec a=arma::zeros<arma::vec>(5);
@@ -80,8 +108,12 @@ namespace sp
         return cos_win(N,a);
     }
 
-    ///////////////////////////////////
-    // b = hanning(N)
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /// \brief Hanning window.
+    ///
+    /// \f$ w_i = 0.5-0.5\ cos(2\pi (i+1) /(N+1))\f$
+    /// @param N Nr of taps
+    ////////////////////////////////////////////////////////////////////////////////////////////
     arma::vec hanning( int N )
     {
         arma::vec h(N);
@@ -92,8 +124,13 @@ namespace sp
         return h;
     }
 
-    ///////////////////////////////////
-    // b = kaiser(N,beta)
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /// \brief Kaiser window.
+    ///
+    /// See Kaiser window at [Wikipedia](https://en.wikipedia.org/wiki/Window_function#Kaiser_window)
+    /// @param N Nr of taps
+    /// @param beta Beta factor
+    ////////////////////////////////////////////////////////////////////////////////////////////
     arma::vec kaiser( int N, double beta )
     {
         arma::vec h(N);
@@ -105,8 +142,12 @@ namespace sp
         return h;
     }
 
-    ///////////////////////////////////
-    // b = triang(N)
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /// \brief Triangle window.
+    ///
+    /// See Triangle window at [Wikipedia](https://en.wikipedia.org/wiki/Window_function#Triangular_window)
+    /// @param N Nr of taps
+    ////////////////////////////////////////////////////////////////////////////////////////////
     arma::vec triang( int N )
     {
         arma::vec h(N);
@@ -129,5 +170,6 @@ namespace sp
         }
         return h;
     }
+    /// @}
 } // end namespace
 #endif

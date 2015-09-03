@@ -5,46 +5,72 @@
 #define SP_FILTER_H
 namespace sp
 {
-    //////////////////////////////////////////////////////////////////
-    // FIR Filter Class
-    //////////////////////////////////////////////////////////////////
+    ///
+    /// @defgroup filter Filter
+    /// \brief FIR/MA and IIR/ARMA filter functions.
+    /// @{
+        
+    ///
+    /// \brief FIR/MA filter class.
+    ///
+    /// Implements FIR/MA filter functions as \f[  y(n) = \sum_{k=0}^{N-1}{b_kx(n-k)}=b_0x(n)+b_1x(n-1)+...+b_{N-1}x(n-(N-1))\f]
+    /// where N is the number of taps in the FIR filter. The filter order is N-1.  
+    /// 
     template <class T1, class T2, class T3>
     class FIR_filt
     {
     private:
-        int N;                // Nr of filter taps
-        int cur_p;            // Pointer to current sample in buffer
-        arma::Col<T1> buf;    // Signal buffer
-        arma::Col<T2> b;      // Filter coefficients
+        int N;                ///< Nr of filter taps
+        int cur_p;            ///< Pointer to current sample in buffer
+        arma::Col<T1> buf;    ///< Signal buffer
+        arma::Col<T2> b;      ///< Filter coefficients
     public:
-        ///////////////////////////////////
-        // Constructor
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        /// \brief Constructor.
+        ////////////////////////////////////////////////////////////////////////////////////////////
         FIR_filt(){}
+        
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        /// \brief Destructor.
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        ~FIR_filt(){}
 
-        ///////////////////////////////////
-        // clear()
-        //      Clears FIR filter internal state
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        /// \brief Clears the internal states and pointer.
+        ////////////////////////////////////////////////////////////////////////////////////////////
         void clear(void)
         {
             buf.zeros();
             cur_p = 0;
         }
 
-        ///////////////////////////////////
-        // set_coeffs(b)
-        //      Sets coefficients in FIR filter
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        /// \brief Sets coefficients in FIR filter.
+        /// The internal state and pointers are cleared
+        /// @param _b Filter coefficients \f$ [b_0 ..b_{N-1}] \f$
+        ////////////////////////////////////////////////////////////////////////////////////////////
         void set_coeffs(arma::Col<T2> &_b)
         {
             N = _b.size();
             buf.set_size(N);
-            buf.zeros();
+            this->clear();
             b = _b;
-            cur_p = 0;
         }
 
-        ///////////////////////////////////
-        // T3 = xxx(T1)
-        //      FIR filter operator, sample input.
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        /// \brief Updates coefficients in FIR filter without clearing the internal states.
+        /// @param _b Filter coefficients \f$ [b_0 ..b_{N-1}] \f$
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        void update_coeffs(arma::Col<T2> &_b)
+        {
+            b = _b;
+        }
+        
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        /// \brief Filter operator.
+        /// @returns Filtered output
+        /// @param in Input sample
+        ////////////////////////////////////////////////////////////////////////////////////////////
         T3 operator()(T1 & in)
         {
             T3 out=0;
@@ -61,9 +87,11 @@ namespace sp
             return out;
         }
 
-        ///////////////////////////////////
-        // T3 = filter(T1)
-        //      FIR filter function, vector version.
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        /// \brief Filter function.
+        /// @returns Filtered output
+        /// @param in Input vector
+        ////////////////////////////////////////////////////////////////////////////////////////////
         arma::Col<T3> filter(arma::Col<T1> & in)
         {
             long int sz = in.size();
@@ -75,29 +103,38 @@ namespace sp
     };
 
 
-    //////////////////////////////////////////////////////////////////
-    // IIR Filter Class
-    //////////////////////////////////////////////////////////////////
+    ///
+    /// \brief IIR/ARMA filter class.
+    ///
+    /// Implements IIR/ARMA filter functions as \f[  a_0y(n) = b_0x(n)+b_1x(n-1)+...+b_{N-1}x(n-(N-1))-a_1y(n-1)-...-a_{M-1}y(n-(M-1))\f]
+    /// where N is the number of taps in the FIR filter part and M is the number of taps in the IIR filter. The filter order is (N-1,M-1)  
+    /// 
     template <class T1, class T2, class T3>
     class IIR_filt
     {
     private:
-        int N;                // Nr of MA filter taps
-        int M;                // Nr of AR filter taps
-        int b_cur_p;          // Pointer to current sample in MA buffer
-        int a_cur_p;          // Pointer to current sample in AR buffer
-        arma::Col<T2> b;      // MA Filter coefficients
-        arma::Col<T2> a;      // AR Filter coefficients
-        arma::Col<T1> b_buf;  // MA Signal buffer
-        arma::Col<T1> a_buf;  // AR Signal buffer
+        int N;                ///< Nr of MA filter taps
+        int M;                ///< Nr of AR filter taps
+        int b_cur_p;          ///< Pointer to current sample in MA buffer
+        int a_cur_p;          ///< Pointer to current sample in AR buffer
+        arma::Col<T2> b;      ///< MA Filter coefficients
+        arma::Col<T2> a;      ///< AR Filter coefficients
+        arma::Col<T1> b_buf;  ///< MA Signal buffer
+        arma::Col<T1> a_buf;  ///< AR Signal buffer
     public:
-        ///////////////////////////////////
-        // Constructor
-        IIR_filt(){};
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        /// \brief Constructor.
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        IIR_filt(){}
 
-        ///////////////////////////////////
-        // clear()
-        //      Clears IIR filter internal state
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        /// \brief Destructor.
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        ~IIR_filt(){}
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        /// \brief Clears the internal states and pointers.
+        ////////////////////////////////////////////////////////////////////////////////////////////
         void clear(void)
         {
             b_buf.zeros();
@@ -106,26 +143,39 @@ namespace sp
             a_cur_p = 0;
         }
 
-        ///////////////////////////////////
-        // set_coeffs(b,a)
-        //      Sets coefficients in FIR filter
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        /// \brief Sets coefficients in IIR filter.
+        /// The internal state and pointers are cleared
+        /// @param _b Filter coefficients \f$ [b_0 ..b_N] \f$
+        /// @param _a Filter coefficients \f$ [a_0 ..a_M] \f$
+        ////////////////////////////////////////////////////////////////////////////////////////////
         void set_coeffs(arma::Col<T2> &_b,arma::Col<T2> &_a)
         {
             N = _b.size();
             M = _a.size();
             b_buf.set_size(N);
-            b_buf.zeros();
             a_buf.set_size(M);
-            a_buf.zeros();
+            this->clear();
             b = _b/_a[0];
             a = _a/_a[0];
-            b_cur_p = 0;
-            a_cur_p = 0;
         }
 
-        ///////////////////////////////////
-        // T3 = xxx(T1)
-        //      IIR filter operator, sample input.
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        /// \brief Updates coefficients in filter without clearing the internal states.
+        /// @param _b Filter coefficients \f$ [b_0 ..b_N] \f$
+        /// @param _a Filter coefficients \f$ [a_0 ..a_M] \f$
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        void update_coeffs(arma::Col<T2> &_b,arma::Col<T2> &_a)
+        {
+            b = _b/_a[0];
+            a = _a/_a[0];
+        }
+        
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        /// \brief Filter operator.
+        /// @returns Filtered output
+        /// @param in Input sample
+        ////////////////////////////////////////////////////////////////////////////////////////////
         T3 operator()(T1 & in)
         {
             T3 out=0;
@@ -156,9 +206,11 @@ namespace sp
             return out;
         }
 
-        ///////////////////////////////////
-        // T3 = filter(T1)
-        //      IIR filter function, vector version.
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        /// \brief Filter function.
+        /// @returns Filtered output
+        /// @param in Input vector
+        ////////////////////////////////////////////////////////////////////////////////////////////
         arma::Col<T3> filter(arma::Col<T1> & in)
         {
             long int sz = in.size();
@@ -169,14 +221,18 @@ namespace sp
         }
     };
 
-    //////////////////////////////////////////////////////////////////
-    // Filter design functions
-    //////////////////////////////////////////////////////////////////
+    ///
+    /// Filter design functions
+    ///
 
-    ///////////////////////////////////
-    // vec = fir1(N,f0)
-    //      FIR design using windows method.
-    //      NB! Returns size N+1
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /// \brief FIR design functions.
+    /// FIR design using windows method (hamming window).
+    /// NB! Returns size N+1
+    /// @returns b Filter coefficients \f$ [b_0 ..b_N] \f$
+    /// @param N Filter order
+    /// @param f0 Filter cutoff frequency in interval [0..1]
+    ////////////////////////////////////////////////////////////////////////////////////////////
     arma::vec fir1(int N, double f0)
     {
         arma::vec b(N+1), h(N+1);
@@ -191,12 +247,15 @@ namespace sp
         return b;
     }
 
-    ///////////////////////////////////
-    // vec = fd_filter(N,fd)
-    //      Fractional delay filter design using windowed sinc method.
-    //      Actual delay is N/2+fd samples for even nr of taps and
-    //      (N-1)/2+fd for odd nr of taps
-    //      Best performance if -1 < fd < 1
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /// \brief Fractional delay function.
+    /// Fractional delay filter design using windowed sinc method.
+    /// Actual delay is N/2+fd samples for even nr of taps and
+    /// (N-1)/2+fd for odd nr of taps
+    /// Best performance if -1 < fd < 1
+    /// @param N Filter length
+    /// @param fd Fractional delay
+    ////////////////////////////////////////////////////////////////////////////////////////////
     arma::vec fd_filter( const int N, double fd )
     {
         arma::vec h(N);
@@ -211,11 +270,13 @@ namespace sp
         return h;
     }
 
-    ///////////////////////////////////
-    // cx_vec = freq(b,a,[M])
-    //      Calculates the frequency response
-    //      b = [b0 .. Nb]
-    //      a = [1 a1 .. Na]
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /// \brief Frequency response function.
+    /// Calculates the frequency response
+    /// @param b FIR/MA filter coefficients
+    /// @param a IIR/AR filter coefficients
+    /// @param M Number of evaluation points, Default 512
+    ////////////////////////////////////////////////////////////////////////////////////////////
     arma::cx_vec freq( const arma::vec b, const arma::vec a, const int M=512)
     {
         arma::cx_vec h(M);
@@ -235,22 +296,32 @@ namespace sp
         return h;
     }
 
-    ///////////////////////////////////
-    // vec = freqz(b,a,[M])
-    //      Calculates the frequency magnitude response
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /// \brief Frequency magnitude response function.
+    /// Calculates the frequency magnitude response
+    /// @param b FIR/MA filter coefficients
+    /// @param a IIR/AR filter coefficients
+    /// @param M Number of evaluation points, Default 512
+    ////////////////////////////////////////////////////////////////////////////////////////////
     arma::vec freqz( const arma::vec b, const arma::vec a, const int M=512)
     {
         arma::cx_vec f = freq(b,a,M);
         return abs(f);
     }
 
-    ///////////////////////////////////
-    // vec = phasez(b,a,[M])
-    //      Calculates the frequency phase response
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /// \brief Frequency phase response function.
+    /// Calculates the frequency phase response
+    /// @param b FIR/MA filter coefficients
+    /// @param a IIR/AR filter coefficients
+    /// @param M Number of evaluation points, Default 512
+    ////////////////////////////////////////////////////////////////////////////////////////////
     arma::vec phasez( const arma::vec b, const arma::vec a, const int M=512)
     {
         arma::cx_vec f = freq(b,a,M);
         return angle(f);
     }
+    /// @}
+
 } // end namespace
 #endif

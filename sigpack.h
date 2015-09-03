@@ -8,6 +8,7 @@
 //                                      Changed file structure
 //  1.03	Claes Rolén		2015-04-26	Added 'parser' class, 'err_handler','wrn_handler'
 //                                      'freqz','phasez'
+//  1.04	Claes Rolén		2015-08-01	Added FFTW class, 'unwrap', 'update_coeffs' + commenting for Doxygen
 
 
 #ifndef ARMA_INCLUDES
@@ -24,4 +25,34 @@
 #include "timing/timing.h"
 #include "gplot/gplot.h"
 #include "parser/parser.h"
+#ifdef HAVE_FFTW
+  #include "fftw/fftw.h"
 #endif
+#endif
+
+/// \mainpage notitle
+///
+/// \section intro_sec General
+/// \tableofcontents
+/// SigPack is a C++ signal processing library using the Armadillo library as a base. 
+/// The API will be familiar for those who has used IT++ and Octave/Matlab. The intention 
+/// is to keep it small and only implement the fundamental signal processing algorithms.
+///
+/// \section features_sec Features
+/// \li Easy to use, based on Armadillo library
+/// \li API similar to Matlab/Octave and IT++
+/// \li FIR/IIR filter
+/// \li Window functions - Hanning, Hamming, Bartlett, Kaiser ...
+/// \li Spectrum and spectrogram
+/// \li Timing/Delay
+/// \li Gnuplot support
+/// \li Up/Downsampling
+/// \li Config file parser
+/// \li FFTW support
+///
+/// \section install_sec Installation
+/// Download Armadillo and SigPack and install/extract them to your install directory. 
+/// Armadillo-4.320.2 version is used in the examples hereafter.
+/// For Windows 64bit users: add the \<Armadillo install dir\>\\examples\\lib_win64 
+/// to your path in your environment variables.
+

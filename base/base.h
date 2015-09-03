@@ -5,15 +5,18 @@
 #define SP_BASE_H
 namespace sp
 {
-    //////////////////////////////////////////////////////////////////
-    // Math functions
-    //////////////////////////////////////////////////////////////////
-    const double PI   = 3.14159265358979323846;     // ... or use arma::datum::pi
+    ///
+    /// @defgroup math Math
+    /// \brief Math functions.
+    /// @{
+
+    const double PI   = 3.14159265358979323846;     ///< ... _or use arma::datum::pi_
     const double PI_2 = 6.28318530717958647692;
 
-    ///////////////////////////////////
-    // y = sinc(x)
-    //      Sinc function
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /// \brief A sinc, sin(x)/x, function.
+    /// @param x The angle in radians
+    ////////////////////////////////////////////////////////////////////////////////////////////
     double sinc( double x )
     {
         if(x==0.0)
@@ -22,9 +25,12 @@ namespace sp
             return std::sin(PI*x)/(PI*x);
     }
 
-    ///////////////////////////////////
-    // y = besseli0()
-    //      Modified first kind bessel function order zero
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /// \brief Modified first kind bessel function order zero.
+    ///
+    /// See bessel functions on [Wikipedia](https://en.wikipedia.org/wiki/Bessel_function)
+    /// @param x
+    ////////////////////////////////////////////////////////////////////////////////////////////
     double besseli0( double x )
     {
         double y=1.0,s=1.0,x2=x*x;
@@ -38,23 +44,20 @@ namespace sp
         return y;
     }
 
-    ///////////////////////////////////
-    // p = angle(x)
-    //      Calculates angle in radians for complex input
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /// \brief Calculates angle in radians for complex input.
+    /// @param x Complex input value
+    ////////////////////////////////////////////////////////////////////////////////////////////
     template <typename T>
     double angle( std::complex<T> &x )
     {
         return std::arg(x);
     }
-    arma::mat angle( arma::cx_mat &x )
-    {
-        arma::mat P;
-        P.copy_size(x);
-        for(unsigned int r=0;r<x.n_rows;r++)
-            for(unsigned int c=0;c<x.n_cols;c++)
-                P(r,c) = std::arg(x(r,c));
-        return P;
-    }
+   
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /// \brief Calculates angle in radians for complex input.
+    /// @param x Complex input vector
+    ////////////////////////////////////////////////////////////////////////////////////////////
     arma::vec angle( arma::cx_vec &x )
     {
         arma::vec P;
@@ -64,21 +67,67 @@ namespace sp
         return P;
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /// \brief Calculates angle in radians for complex input.
+    /// @param x Complex input matrix
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    arma::mat angle( arma::cx_mat &x )
+    {
+        arma::mat P;
+        P.copy_size(x);
+        for(unsigned int r=0;r<x.n_rows;r++)
+            for(unsigned int c=0;c<x.n_cols;c++)
+                P(r,c) = std::arg(x(r,c));
+        return P;
+    } 
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /// \brief Unwraps the angle vector x, accumulates phase.
+    /// @param x Complex input vector
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    arma::vec unwrap( arma::vec &x )
+    {
+        arma::vec P;
+        double pacc = 0, pdiff = 0;
+        const double thr=PI*170/180;
+        P.copy_size(x);
+        P(0)=x(0);
+        for(unsigned int r=1;r<x.n_rows;r++)
+        {
+            pdiff = x(r)-x(r-1); 
+            if( pdiff >= thr ) pacc += -PI_2; 
+            if( pdiff <= -thr) pacc +=  PI_2;
+            P(r)=pacc+x(r);
+        }
+        return P;
+    }
+    /// @} 
+
+
+    ///
+    /// @defgroup misc Misc
+    /// \brief Misc functions, such as error handling etc.
+    /// @{
+        
     ///////////////////////////////////
     // err_handler("Error string")
     //      Prints an error message, waits for input and
     //      then exits with error
 #define err_handler(msg) \
-    { \
-        std::cout << "SigPack Error [" << __FILE__  << "@" << __LINE__ << "]: " << msg << std::endl; \
-        std::cin.get(); \
-        exit(EXIT_FAILURE); \
-    }
+       { \
+         std::cout << "SigPack Error [" << __FILE__  << "@" << __LINE__ << "]: " << msg << std::endl; \
+         std::cin.get(); \
+         exit(EXIT_FAILURE);\
+        }
 
     ///////////////////////////////////
     // wrn_handler("Warning string")
     //      Prints an warning message
-#define wrn_handler(msg)  std::cout << "SigPack warning [" << __FILE__ << "@" << __LINE__ << "]: " << msg << std::endl;
+#define wrn_handler(msg)  \
+       { \
+         std::cout << "SigPack warning [" << __FILE__ << "@" << __LINE__ << "]: " << msg << std::endl;\
+       }
+    /// @} 
 
 } // end namespace
 #endif

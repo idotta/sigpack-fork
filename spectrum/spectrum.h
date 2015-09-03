@@ -5,14 +5,20 @@
 #define SP_SPECTRUM_H
 namespace sp
 {
-    //////////////////////////////////////////////////////////////////
-    // Spectrum functions
-    //////////////////////////////////////////////////////////////////
+    ///
+    /// @defgroup spectrum Spectrum
+    /// \brief Spectrum functions.
+    /// @{
 
-    ///////////////////////////////////
-    // Pxx = spectrum(x,W)
-    //      Spectrum of x using window W
-    template <class T1>
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /// \brief Windowed spectrum calculation.
+    ///
+    /// The spectrum is calculated using the fast fourier transform of the windowed input data vector
+    /// @returns A complex spectrum vector
+    /// @param x Input vector
+    /// @param W Window function vector. NB! Must be same size as input vector
+    ////////////////////////////////////////////////////////////////////////////////////////////
+   template <class T1>
     arma::cx_vec spectrum(arma::Col<T1> &x, arma::vec &W)
     {
         arma::cx_vec Pxx(x.size());
@@ -21,22 +27,27 @@ namespace sp
         return Pxx;
     }
 
-    ///////////////////////////////////
-    // Pxx = psd(x,W)
-    //      Power spectrum density of x using window W
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /// \brief Power spectrum density calculation using windowed data.
+    /// @returns A real valued PSD vector
+    /// @param x Input vector
+    /// @param W Window function vector. NB! Must be same size as input vector
+    ////////////////////////////////////////////////////////////////////////////////////////////
     template <class T1>
     arma::vec psd(arma::Col<T1> &x, arma::vec &W)
     {
         arma::cx_vec X(x.size());
         arma::vec Pxx(x.size());
         X = spectrum(x,W);          // FFT calc
-        Pxx = real(X % conj(X));    // Calc power spectra and compensate
+        Pxx = real(X % conj(X));    // Calc power spectra
         return Pxx;
     }
 
-    ///////////////////////////////////
-    // Pxx = psd(x)
-    //      Power spectrum density of x using Hamming window
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /// \brief Power spectrum density calculation using Hamming windowed data.
+    /// @returns A real valued PSD vector
+    /// @param x Input vector
+    ////////////////////////////////////////////////////////////////////////////////////////////
     template <class T1>
     arma::vec psd(arma::Col<T1> &x)
     {
@@ -44,13 +55,16 @@ namespace sp
         W = hamming(x.size());
         return psd(x,W);
     }
-
-    ////////-///////////////////////////
-    // Pxx = specgram_cx(x,Nfft,Noverl)
-    //      Spectrogram of signal
-    //      x      - input signal
-    //      Nfft   - FFT size
-    //      Noverl - Nr of samples overlap
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /// \brief Spectrogram calculation using Hamming windowed data.
+    ///
+    /// See spectrogram at [Wikipedia](https://en.wikipedia.org/wiki/Spectrogram)
+    /// @returns A complex spectrogram matrix
+    /// @param x Input vector
+    /// @param Nfft  FFT size
+    /// @param Noverl FFT overlap size
+    ////////////////////////////////////////////////////////////////////////////////////////////
     template <class T1>
     arma::cx_mat specgram_cx(arma::Col<T1> &x, const int Nfft=512, const int Noverl=256)
     {
@@ -87,12 +101,15 @@ namespace sp
         return Pw;
     }
 
-    ///////////////////////////////////
-    // Pxx = specgram(x,Nfft,Noverl)
-    //      Power spectrogram of signal
-    //      x      - input signal
-    //      Nfft   - FFT size
-    //      Noverl - Nr of samples overlap
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /// \brief Power spectrogram calculation.
+    ///
+    /// See spectrogram at [Wikipedia](https://en.wikipedia.org/wiki/Spectrogram)
+    /// @returns A power spectrogram matrix
+    /// @param x Input vector
+    /// @param Nfft  FFT size
+    /// @param Noverl FFT overlap size
+    ////////////////////////////////////////////////////////////////////////////////////////////
     template <class T1>
     arma::mat specgram(arma::Col<T1> &x, const int Nfft=512, const int Noverl=256)
     {
@@ -102,12 +119,16 @@ namespace sp
         Sg = real(Pw % conj(Pw));              // Calculate power spectrum
         return Sg;
     }
-    ///////////////////////////////////
-    // Pxx = specgram_ph(x,Nfft,Noverl)
-    //      Phase spectrogram of signal
-    //      x      - input signal
-    //      Nfft   - FFT size
-    //      Noverl - Nr of samples overlap
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /// \brief Phase spectrogram calculation.
+    ///
+    /// See spectrogram at [Wikipedia](https://en.wikipedia.org/wiki/Spectrogram)
+    /// @returns A phase spectrogram matrix
+    /// @param x Input vector
+    /// @param Nfft  FFT size
+    /// @param Noverl FFT overlap size
+    ////////////////////////////////////////////////////////////////////////////////////////////
     template <class T1>
     arma::mat specgram_ph(arma::Col<T1> &x, const int Nfft=512, const int Noverl=256)
     {
@@ -118,9 +139,15 @@ namespace sp
         return Sg;
     }
 
-    ///////////////////////////////////
-    // Pxx = pwelch_ph(x,Nfft,Noverl)
-    //      Phase spectrum estimation using Welch method
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /// \brief Phase spectrum calculation using Welsh's method.
+    ///
+    /// See Welsh's method at [Wikipedia](https://en.wikipedia.org/wiki/Welch%27s_method)
+    /// @returns A phase spectrum vector
+    /// @param x Input vector
+    /// @param Nfft  FFT size
+    /// @param Noverl FFT overlap size
+    ////////////////////////////////////////////////////////////////////////////////////////////
     template <class T1>
     arma::vec pwelch_ph(arma::Col<T1> &x, const int Nfft=512, const int Noverl=256)
     {
@@ -129,11 +156,16 @@ namespace sp
         return arma::mean(Ph ,1);
     }
 
-    ///////////////////////////////////
-    // Pxx = pwelch(x,Nfft,Noverl)
-    //      Spectrum estimation using Welch method
-    //      abs(pwelch(x,Nfft,Noverl)) is equvivalent
-    //      to Matlab's: pwelch(x,Nfft,Noverl,'twosided','power')
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /// \brief Power spectrum calculation using Welsh's method.
+    ///
+    /// _abs(pwelch(x,Nfft,Noverl))_ is equivalent to Matlab's: _pwelch(x,Nfft,Noverl,'twosided','power')_ <br> 
+    /// See Welsh's method at [Wikipedia](https://en.wikipedia.org/wiki/Welch%27s_method)
+    /// @returns A power spectrum vector
+    /// @param x Input vector
+    /// @param Nfft  FFT size
+    /// @param Noverl FFT overlap size
+    ////////////////////////////////////////////////////////////////////////////////////////////
     template <class T1>
     arma::vec pwelch(arma::Col<T1> &x, const int Nfft=512, const int Noverl=256)
     {
@@ -141,5 +173,6 @@ namespace sp
         Pxx = specgram(x,Nfft,Noverl);
         return arma::mean(Pxx,1);
     }
+    /// @}
 } // end namepace
 #endif

@@ -6,17 +6,27 @@
 #include <map>
 
 namespace sp
-{	
-    //////////////////////////////////////////////////////////////////
-    // Parser Class
-    //////////////////////////////////////////////////////////////////
+{	    
+    ///
+    /// @defgroup parser Parser
+    /// \brief Parameter file parser functions.
+    /// @{
+        
+    ///
+    /// \brief A parser class.
+    ///
+    /// Implements parsing from text file for different types
+    /// 
     class parser
     {
     private:
-        std::map<std::string, std::string> par_map;
+        std::map<std::string, std::string> par_map; ///< Map structure to store parameter and value
 
-        ///////////////////////////////////
-        // Check key
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        /// \brief Check if key is valid.
+        /// @returns TRUE if key is valid FALSE otherwise
+        /// @param key Key string
+        ////////////////////////////////////////////////////////////////////////////////////////////
         bool valid_key(const std::string &key)
         {
             if(par_map.find(key) == par_map.end() )
@@ -27,8 +37,13 @@ namespace sp
             return true;
         }
 
-        ///////////////////////////////////
-        // Parse complex
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        /// \brief Parse complex value.
+        /// 
+        /// String may be in format e.g. "1+1i","1+1j" or entirely real or imaginary "1", "1i" or "1j"
+        /// @returns Complex value
+        /// @param str Complex notation string
+        ////////////////////////////////////////////////////////////////////////////////////////////
         std::complex<double> parse_cx(std::string str)
         {
             double re,im;
@@ -53,8 +68,12 @@ namespace sp
         }
 
     public:
-        ///////////////////////////////////
-        // Constructor
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        /// \brief Constructor.
+        /// 
+        /// Opens parameter file and puts the key and value in the map structure
+        /// @param fname Parameter file name
+        ////////////////////////////////////////////////////////////////////////////////////////////
         parser(const std::string &fname)
         {
             std::ifstream fh;
@@ -127,9 +146,18 @@ namespace sp
                 fh.close();    
             }
         }
+        
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        /// \brief Destructor.
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        ~parser(){}
 
-        ////////////////////////////////
-        // Get function - generic
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        /// \brief Generic type get function.
+        /// @returns Value of type T, if it not exists in file the default value is returned
+        /// @param key Parameter name
+        /// @param def_val Default value if key was not found in file 
+        ////////////////////////////////////////////////////////////////////////////////////////////
         template <typename T>
         T  getParam(const std::string key,const T def_val)
         {
@@ -144,8 +172,12 @@ namespace sp
             return out;
         }
 
-        ////////////////////////////////
-        // Get function - string
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        /// \brief String type get function.
+        /// @returns String value, if it not exists in file the default value is returned
+        /// @param key Parameter name
+        /// @param def_val Default value if key was not found in file 
+        ////////////////////////////////////////////////////////////////////////////////////////////
         std::string getString(const std::string key,const std::string def_val)
         {
             if(!valid_key(key))
@@ -156,8 +188,12 @@ namespace sp
             return par_map.find(key)->second;
         }
              
-        ////////////////////////////////
-        // Get function - Col
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        /// \brief Col type get function.
+        /// @returns Col value, if it not exists in file the default value is returned
+        /// @param key Parameter name
+        /// @param def_val Default value if key was not found in file 
+        ////////////////////////////////////////////////////////////////////////////////////////////
         template <typename T>
         arma::Col<T> getCol(const std::string key,const arma::Col<T> def_val)
         {
@@ -180,8 +216,12 @@ namespace sp
             return x;
         }
 
-        ////////////////////////////////
-        // Get function - Complex Col
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        /// \brief cx_vec type get function.
+        /// @returns cx_vec value, if it not exists in file the default value is returned
+        /// @param key Parameter name
+        /// @param def_val Default value if key was not found in file 
+        ////////////////////////////////////////////////////////////////////////////////////////////
         arma::cx_vec getCxCol(const std::string key,const arma::cx_vec def_val)
         {
             if(!valid_key(key))
@@ -202,8 +242,12 @@ namespace sp
             return x;
         }
 
-        ////////////////////////////////
-        // Get function - Row
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        /// \brief Row type get function.
+        /// @returns Row value, if it not exists in file the default value is returned
+        /// @param key Parameter name
+        /// @param def_val Default value if key was not found in file 
+        ////////////////////////////////////////////////////////////////////////////////////////////
         template <typename T>
         arma::Row<T> getRow(const std::string key,const arma::Row<T> def_val)
         {
@@ -226,8 +270,12 @@ namespace sp
             return x;
         }
 
-        ////////////////////////////////
-        // Get function - Complex Row
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        /// \brief cx_rowvec type get function.
+        /// @returns cx_rowvec value, if it not exists in file the default value is returned
+        /// @param key Parameter name
+        /// @param def_val Default value if key was not found in file 
+        ////////////////////////////////////////////////////////////////////////////////////////////
         arma::cx_rowvec getCxRow(const std::string key,const arma::cx_rowvec def_val)
         {
             if(!valid_key(key))
@@ -248,8 +296,12 @@ namespace sp
             return x;
         }
 
-        ////////////////////////////////
-        // Get function - Mat
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        /// \brief Mat type get function.
+        /// @returns Mat value, if it not exists in file the default value is returned
+        /// @param key Parameter name
+        /// @param def_val Default value if key was not found in file 
+        ////////////////////////////////////////////////////////////////////////////////////////////
         template <typename T>
         arma::Mat<T> getMat(const std::string key,const arma::Mat<T> def_val)
         {
@@ -285,8 +337,12 @@ namespace sp
             return x;
         }
 
-        ////////////////////////////////
-        // Get function - CxMat
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        /// \brief cx_mat type get function.
+        /// @returns cx_mat value, if it not exists in file the default value is returned
+        /// @param key Parameter name
+        /// @param def_val Default value if key was not found in file 
+        ////////////////////////////////////////////////////////////////////////////////////////////
         arma::cx_mat getCxMat(const std::string key,const arma::cx_mat def_val)
         {
             if(!valid_key(key))
@@ -321,5 +377,7 @@ namespace sp
         }
 
     }; // end Class
+    /// @}
+
 } // end namespace
 #endif
