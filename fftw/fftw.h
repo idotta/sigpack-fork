@@ -125,7 +125,7 @@ namespace sp
 				replan = false;
 			}
 			fftw_execute_dft_r2c(p, in, out);
-			int offset = ceil(N/2.0);
+			int offset = static_cast<int>(ceil(N/2.0));
 			int n_elem = N - offset;
 			for (int i = 0; i < n_elem; ++i) {
 			     Pxx(offset + i) = std::conj(Pxx(n_elem - i));

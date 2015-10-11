@@ -152,6 +152,19 @@ namespace sp
             send2gp(tmp_s.str());
         }
 
+		////////////////////////////////////////////////////////////////////////////////////////////
+		/// \brief Set label at position x,y.
+		/// @param x x value         
+		/// @param y y value         
+		/// @param label label string         
+		////////////////////////////////////////////////////////////////////////////////////////////
+		void gplot::label(const double& x, const double& y, const std::string& label)
+		{
+			std::ostringstream tmp_s;
+			tmp_s << "set label \"" << label << "\" at " << x << "," << y;
+			send2gp(tmp_s.str());
+		}
+
         ////////////////////////////////////////////////////////////////////////////////////////////
         /// \brief Set windowtitle.
         /// @param name title string         
@@ -210,14 +223,20 @@ namespace sp
         /// @param y     y vector      
         /// @param label plot label      
         ////////////////////////////////////////////////////////////////////////////////////////////
-        void gplot::plot( arma::vec &x, arma::vec &y, const std::string& label)
+        void gplot::plot( arma::vec &x, arma::vec &y, const std::string& label="")
         {
             std::ostringstream tmp_s;
-    //        send2gp("set key noautotitle");
-            send2gp("set grid");
-            send2gp("set nokey");
-    //        tmp_s << "plot '-' title \"" << label << "\" with " << linestyle;
-            tmp_s << "plot '-' with " << linestyle;
+			if (label.empty())
+			{ 
+				send2gp("set nokey");
+			    tmp_s << "plot '-' with " << linestyle;
+			}
+			else
+			{
+				send2gp("set key noautotitle");
+				tmp_s << "plot '-' title \"" << label << "\" with " << linestyle;
+			}            
+			send2gp("set grid");
             send2gp(tmp_s.str());
             plot_str2(x,y);
         }
@@ -227,7 +246,7 @@ namespace sp
         /// @param y     y vector      
         /// @param label plot label      
         ////////////////////////////////////////////////////////////////////////////////////////////
-        void gplot::plot(arma::vec &y, const std::string& label)
+        void gplot::plot(arma::vec &y, const std::string& label="")
         {
             arma::vec t(y.size());
             t = arma::linspace(1,y.size(),y.size());
@@ -274,7 +293,7 @@ namespace sp
         /// @param y    y vector      
         /// @param label plot label      
         ////////////////////////////////////////////////////////////////////////////////////////////
-        void gplot::scatter( arma::vec &x, arma::vec &y, const std::string& label)
+        void gplot::scatter( arma::vec &x, arma::vec &y, const std::string& label="")
         {
             set_linestyle("points");
             plot(x,y,label);
@@ -361,6 +380,88 @@ namespace sp
             send2gp("set pm3d");
             mesh(x);
         }
+
+
+		////////////////////////////////////////////////////////////////////////////////////////////
+		/// \brief Save plot to file.
+		/// @param name filename
+		///
+		/// Extensions that are supported:
+		/// - png
+		/// - ps
+		/// - eps
+		/// - tex
+		/// - pdf
+		/// - svg
+		/// - emf
+		/// - gif
+		///
+		/// \note When 'latex' output is used the '\' must be escaped by '\\\\' e.g set_xlabel("Frequency $\\\\omega = 2 \\\\pi f$")
+		////////////////////////////////////////////////////////////////////////////////////////////
+		void gplot::set_output(const std::string& name)
+		{
+			size_t found = name.find_last_of(".");
+			std::string ext;
+			ext = name.substr(found + 1);
+			std::ostringstream tmp_s;
+
+			if (ext.compare("png")==0)
+			{
+				tmp_s << "set terminal pngcairo enhanced font 'Verdana,10'";
+			}
+			else if (ext.compare("ps") == 0)
+			{
+				tmp_s << "set terminal postscript enhanced color";
+			}
+			else if (ext.compare("eps") == 0)
+			{
+				tmp_s << "set terminal postscript eps enhanced color";
+			}
+			else if (ext.compare("tex") == 0)
+			{
+				tmp_s << "set terminal cairolatex eps color enhanced";
+			}
+			else if (ext.compare("pdf") == 0)
+			{
+				tmp_s << "set terminal pdfcairo color enhanced";
+			}
+			else if (ext.compare("svg") == 0)
+			{
+				tmp_s << "set terminal svg enhanced";
+			}
+			else if (ext.compare("emf") == 0)
+			{
+				tmp_s << "set terminal emf color enhanced";
+			}
+			else if (ext.compare("gif") == 0)
+			{
+				tmp_s << "set terminal gif enhanced";
+			}
+			//else if (ext.compare("jpg") == 0)
+			//{
+			//	tmp_s << "set terminal jpeg ";
+			//}
+			else
+			{
+				tmp_s << "set terminal " << GP_TERM;
+			}
+
+			send2gp(tmp_s.str());
+			tmp_s.str("");  // Clear buffer
+			tmp_s << "set output '" << name << "'";
+			send2gp(tmp_s.str());
+		}
+
+
+		////////////////////////////////////////////////////////////////////////////////////////////
+		/// \brief Restore output terminal.
+		////////////////////////////////////////////////////////////////////////////////////////////
+		void gplot::restore_output(void)
+		{
+			std::ostringstream tmp_s;
+			tmp_s << "set terminal " << GP_TERM;
+			send2gp(tmp_s.str());
+		}
     }; // End Gnuplot Class
 
   
