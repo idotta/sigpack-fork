@@ -11,8 +11,8 @@ namespace sp
 	/// @defgroup fftw FFTW
 	/// \brief One dimensional FFT functions using FFTW3 library.
 	///
-	/// \note If a single FFT is to be used the Armadillo version is faster. 
-	/// FFTW takes longer time at the first calculation but is faster in the following loops 
+	/// \note If a single FFT is to be used the Armadillo version is faster.
+	/// FFTW takes longer time at the first calculation but is faster in the following loops
 	/// @{
 
 
@@ -20,16 +20,17 @@ namespace sp
 	/// \brief FFTW class.
 	///
 	/// Implements FFT functions for Armadillo types. For more info see [fftw.org](http://fftw.org/)
-	/// 
+	///
 	class FFTW
 	{
 	private:
-		fftw_plan pl_fft;     ///< Real FFTW plan 
-		fftw_plan pl_ifft;    ///< Real IFFTW plan 
-		fftw_plan pl_fft_cx;  ///< Complex FFTW plan 
-		fftw_plan pl_ifft_cx; ///< Complex IFFTW plan 
+		fftw_plan pl_fft;     ///< Real FFTW plan
+		fftw_plan pl_ifft;    ///< Real IFFTW plan
+		fftw_plan pl_fft_cx;  ///< Complex FFTW plan
+		fftw_plan pl_ifft_cx; ///< Complex IFFTW plan
 		int N;                ///< FFT length
-		int alg;              ///< One of FFTW_ESTIMATE, FFTW_MEASURE, FFTW_PATIENT, FFTW_EXHAUSTIVE, FFTW_WISDOM_ONLY see [FFTW plans](http://fftw.org/fftw3_doc/Planner-Flags.html#Planner-Flags)			
+		int R,C;              ///< FFT 2D dims
+		int alg;              ///< One of FFTW_ESTIMATE, FFTW_MEASURE, FFTW_PATIENT, FFTW_EXHAUSTIVE, FFTW_WISDOM_ONLY see [FFTW plans](http://fftw.org/fftw3_doc/Planner-Flags.html#Planner-Flags)
 		int export_alg;       ///< Alg used for exporting wisdom
 	public:
 		////////////////////////////////////////////////////////////////////////////////////////////
@@ -40,6 +41,29 @@ namespace sp
 		FFTW(int _N, int _alg = FFTW_ESTIMATE)
 		{
 			N = _N;
+			R = 0;
+			C = 0;
+			alg = _alg;
+			export_alg = FFTW_PATIENT;
+			pl_fft = NULL;
+			pl_ifft = NULL;
+			pl_fft_cx = NULL;
+			pl_ifft_cx = NULL;
+		}
+		//++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		//++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		//++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		//++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		////////////////////////////////////////////////////////////////////////////////////////////
+		/// \brief Constructor.
+		/// @param _N FFT length
+		/// @param _alg FFTW algorithm selection, Default FFTW_ESTIMATE
+		////////////////////////////////////////////////////////////////////////////////////////////
+		FFTW(int _R, int _C, int _alg = FFTW_ESTIMATE)
+		{
+			R = _R;
+			C = _C;
+			N = 0;
 			alg = _alg;
 			export_alg = FFTW_PATIENT;
 			pl_fft = NULL;
@@ -48,6 +72,10 @@ namespace sp
 			pl_ifft_cx = NULL;
 		}
 
+		//++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		//++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		//++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		//++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		////////////////////////////////////////////////////////////////////////////////////////////
 		/// \brief Destructor.
 		////////////////////////////////////////////////////////////////////////////////////////////
@@ -63,7 +91,7 @@ namespace sp
 		////////////////////////////////////////////////////////////////////////////////////////////
 		/// \brief FFT of complex input.
 		/// @param x Complex input data
-		/// @param[out] Pxx Vector to hold complex FFT of length N 
+		/// @param[out] Pxx Vector to hold complex FFT of length N
 		////////////////////////////////////////////////////////////////////////////////////////////
 		void fft_cx(arma::cx_vec &x, arma::cx_vec &Pxx)
 		{
@@ -82,7 +110,7 @@ namespace sp
 
 		////////////////////////////////////////////////////////////////////////////////////////////
 		/// \brief FFT of complex input.
-		/// @returns Complex FFT of length N 
+		/// @returns Complex FFT of length N
 		/// @param x Complex input data
 		////////////////////////////////////////////////////////////////////////////////////////////
 		arma::cx_vec fft_cx(arma::cx_vec &x)
@@ -95,7 +123,7 @@ namespace sp
 		////////////////////////////////////////////////////////////////////////////////////////////
 		/// \brief Inverse FFT.
 		/// @param Pxx Complex FFT
-		/// @param[out] x Vector to hold complex data of length N 
+		/// @param[out] x Vector to hold complex data of length N
 		////////////////////////////////////////////////////////////////////////////////////////////
 		void ifft_cx(arma::cx_vec &Pxx, arma::cx_vec &x)
 		{
@@ -115,7 +143,7 @@ namespace sp
 
 		////////////////////////////////////////////////////////////////////////////////////////////
 		/// \brief Inverse FFT.
-		/// @returns Complex data vector of length N 
+		/// @returns Complex data vector of length N
 		/// @param Pxx Complex FFT
 		////////////////////////////////////////////////////////////////////////////////////////////
 		arma::cx_vec ifft_cx(arma::cx_vec &Pxx)
@@ -128,7 +156,7 @@ namespace sp
 		////////////////////////////////////////////////////////////////////////////////////////////
 		/// \brief FFT of real input.
 		/// @param x Input data
-		/// @param[out] Pxx Vector to hold complex FFT of length N 
+		/// @param[out] Pxx Vector to hold complex FFT of length N
 		////////////////////////////////////////////////////////////////////////////////////////////
 		void fft(arma::vec &x, arma::cx_vec &Pxx)
 		{
@@ -154,7 +182,7 @@ namespace sp
 
 		////////////////////////////////////////////////////////////////////////////////////////////
 		/// \brief FFT of real input.
-		/// @returns Complex FFT of length N 
+		/// @returns Complex FFT of length N
 		/// @param x Real input data
 		arma::cx_vec fft(arma::vec &x)
 		{
@@ -166,7 +194,7 @@ namespace sp
 		////////////////////////////////////////////////////////////////////////////////////////////
 		/// \brief Inverse FFT.
 		/// @param Pxx Complex FFT
-		/// @param[out] x Vector to hold real data of length N 
+		/// @param[out] x Vector to hold real data of length N
 		////////////////////////////////////////////////////////////////////////////////////////////
 		void ifft(arma::cx_vec &Pxx, arma::vec &x)
 		{
@@ -186,13 +214,138 @@ namespace sp
 
 		////////////////////////////////////////////////////////////////////////////////////////////
 		/// \brief Inverse FFT.
-		/// @returns Real data vector of length N 
+		/// @returns Real data vector of length N
 		/// @param Pxx Complex FFT
 		////////////////////////////////////////////////////////////////////////////////////////////
 		arma::vec ifft(arma::cx_vec &Pxx)
 		{
 			arma::vec x(N);
 			ifft(Pxx, x);
+			return x;
+		}
+
+		////////////////////////////////////////////////////////////////////////////////////////////
+		/// \brief FFT of real 2D input.
+		/// @param x Input data matrix
+		/// @param[out] Pxx Matrix to hold complex FFT of length [RxC]
+		////////////////////////////////////////////////////////////////////////////////////////////
+		void fft(arma::mat &x, arma::cx_mat &Pxx)
+		{
+			arma::cx_mat Ptmp(R / 2 + 1, C,arma::fill::ones);
+			double*        in = x.memptr();
+			fftw_complex* out = reinterpret_cast<fftw_complex*>(Ptmp.memptr());
+			if (pl_fft == NULL)
+			{
+				pl_fft = fftw_plan_dft_r2c_2d( C,R, in, out, alg); // Column to row-major order trick: switch C and R
+				if (pl_fft == NULL)
+				{
+					err_handler("Unable to create real data FFTW plan");
+				}
+			}
+
+			fftw_execute_dft_r2c(pl_fft, in, out);
+
+			// Reshape Pxx - upper half
+			std::complex<double> *ptr= reinterpret_cast<std::complex<double>*>(out);
+			const int Roff = R / 2 + 1;
+			for (int r = 0; r < Roff; r++)
+			{
+				for (int c = 0; c < C; c++)
+				{
+					Pxx(r, c) = ptr[r + c*Roff];
+				}
+			}
+			// Reshape Pxx - conj symmetry
+			for (int r = Roff; r < R; r++)
+			{
+				Pxx(r, 0) = conj(ptr[R - r]);
+				for (int c = 1; c < C; c++)
+				{
+					Pxx(r, c) = conj(ptr[R - r + (C - c)*Roff]);
+				}
+			}
+		}
+
+		////////////////////////////////////////////////////////////////////////////////////////////
+		/// \brief FFT of real 2D input.
+		/// @returns Complex FFT of size [RxC]
+		/// @param x Real input matrix
+		arma::cx_mat fft(arma::mat &x)
+		{
+			arma::cx_mat Pxx(R,C,arma::fill::ones);
+			fft(x, Pxx);
+			return Pxx;
+		}
+
+		////////////////////////////////////////////////////////////////////////////////////////////
+		/// \brief Inverse 2D FFT.
+		/// @param Pxx Complex FFT
+		/// @param[out] x Matrix to hold real data of size[RxC]
+		////////////////////////////////////////////////////////////////////////////////////////////
+		void ifft(arma::cx_mat &Pxx, arma::mat &x)
+		{
+			// Reshape to row-major format
+			int Roff = R / 2 + 1;
+			arma::cx_mat Ptmp(Roff, C);
+			std::complex<double> *ptr = reinterpret_cast<std::complex<double>*>(Ptmp.memptr());
+			for (int r = 0; r < Roff; r++)
+			{
+				for (int c = 0; c < C; c++)
+				{
+					ptr[r + c*Roff] = Pxx(r,c);
+				}
+			}
+
+			fftw_complex* in = reinterpret_cast<fftw_complex*>(Ptmp.memptr());
+			double*      out = x.memptr();
+			if (pl_ifft == NULL)
+			{
+				pl_ifft = fftw_plan_dft_c2r_2d(C,R, in, out, alg);
+				if (pl_ifft == NULL)
+				{
+					err_handler("Unable to create real data IFFTW plan");
+				}
+			}
+			fftw_execute_dft_c2r(pl_ifft, in, out);
+			x /= (R*C);
+		}
+
+		////////////////////////////////////////////////////////////////////////////////////////////
+		/// \brief Inverse FFT.
+		/// @returns Real data vector of length N
+		/// @param Pxx Complex FFT
+		////////////////////////////////////////////////////////////////////////////////////////////
+		arma::mat ifft(arma::cx_mat &Pxx)
+		{
+			arma::mat x(R,C);
+			ifft(Pxx, x);
+			return x;
+		}
+
+
+		////////////////////////////////////////////////////////////////////////////////////////////
+		/// \brief 2D FFT shift.
+		/// @returns Circular shifted FFT
+		/// @param Pxx Complex FFT
+		////////////////////////////////////////////////////////////////////////////////////////////
+		arma::cx_mat fftshift(arma::cx_mat &Pxx)
+		{
+			arma::cx_mat x(R, C);
+			x = shift(Pxx, floor(R / 2), 0);
+			x = shift(x, floor(C / 2), 1);
+			return x;
+		}
+
+		////////////////////////////////////////////////////////////////////////////////////////////
+		/// \brief 2D FFT inverse/reverse shift.
+		/// @returns Circular shifted FFT
+		/// @param Pxx Complex FFT
+		////////////////////////////////////////////////////////////////////////////////////////////
+		arma::cx_mat ifftshift(arma::cx_mat &Pxx)
+		{
+			arma::cx_mat x(R, C);
+			x = shift(Pxx, -ceil(R / 2), 0);
+			x = shift(x, -ceil(C / 2), 1);
 			return x;
 		}
 
@@ -225,17 +378,32 @@ namespace sp
 		void export_wisdom_fft(const std::string fname)
 		{
 			fftw_plan pl_w = NULL;
-			double *x_r = fftw_alloc_real(N);
-			fftw_complex *x_cx1 = fftw_alloc_complex(N);
+            double *x_r;
+            fftw_complex *x_cx1;
 
-			// Replan using wisdom
-			pl_w = fftw_plan_dft_r2c_1d(N, x_r, x_cx1, export_alg);
+			if(R==0 || C==0)   // 1D
+			{
+			    x_r   = fftw_alloc_real(N);
+			    x_cx1 = fftw_alloc_complex(N);
+
+                // Replan using wisdom
+			    pl_w = fftw_plan_dft_r2c_1d(N, x_r, x_cx1, export_alg);
+
+			}
+			else             // 2D
+			{
+			    x_r   = fftw_alloc_real(R*C);
+			    x_cx1 = fftw_alloc_complex(R*C);
+
+                // Replan using wisdom
+			    pl_w = fftw_plan_dft_r2c_2d(C,R, x_r, x_cx1, export_alg);
+			}
 			if (pl_w == NULL)
 			{
 				err_handler("Unable to create real data FFTW plan");
 			}
 
-			// Export 
+			// Export
 			if (fftw_export_wisdom_to_filename(fname.c_str()) == 0)
 			{
 				err_handler("Could not export wisdom to file!");
@@ -245,6 +413,7 @@ namespace sp
 			fftw_free(x_r);
 			fftw_free(x_cx1);
 		}
+
 		////////////////////////////////////////////////////////////////////////////////////////////
 		/// \brief Export real IFFT wisdom to file.
 		/// @param fname File name
@@ -252,17 +421,32 @@ namespace sp
 		void export_wisdom_ifft(const std::string fname)
 		{
 			fftw_plan pl_w = NULL;
-			double *x_r = fftw_alloc_real(N);
-			fftw_complex *x_cx1 = fftw_alloc_complex(N);
+            double *x_r;
+            fftw_complex *x_cx1;
 
-			// Replan using wisdom
-			pl_w = fftw_plan_dft_c2r_1d(N, x_cx1, x_r, export_alg);
+			if(R==0 || C==0)   // 1D
+			{
+			    x_r   = fftw_alloc_real(N);
+			    x_cx1 = fftw_alloc_complex(N);
+
+			    // Replan using wisdom
+			    pl_w = fftw_plan_dft_c2r_1d(N, x_cx1, x_r, export_alg);
+            }
+            else             // 2D
+			{
+			    x_r   = fftw_alloc_real(R*C);
+			    x_cx1 = fftw_alloc_complex(R*C);
+
+                // Replan using wisdom
+			    pl_w = fftw_plan_dft_c2r_2d(C,R, x_cx1, x_r, export_alg);
+			}
+
 			if (pl_w == NULL)
 			{
 				err_handler("Unable to create real data FFTW plan");
 			}
 
-			// Export 
+			// Export
 			if (fftw_export_wisdom_to_filename(fname.c_str()) == 0)
 			{
 				err_handler("Could not export wisdom to file!");
@@ -279,17 +463,31 @@ namespace sp
 		void export_wisdom_fft_cx(const std::string fname)
 		{
 			fftw_plan pl_w = NULL;
-			fftw_complex *x_cx1 = fftw_alloc_complex(N);
-			fftw_complex *x_cx2 = fftw_alloc_complex(N);
+			fftw_complex *x_cx1, *x_cx2;
 
-			// Replan using wisdom
-			pl_w = fftw_plan_dft_1d(N, x_cx1, x_cx2, FFTW_FORWARD, export_alg);
+            if(R==0 || C==0)      // 1D
+            {
+			    x_cx1 = fftw_alloc_complex(N);
+			    x_cx2 = fftw_alloc_complex(N);
+
+			    // Replan using wisdom
+			    pl_w = fftw_plan_dft_1d(N, x_cx1, x_cx2, FFTW_FORWARD, export_alg);
+			}
+			else
+			{
+			    x_cx1 = fftw_alloc_complex(R*C);
+			    x_cx2 = fftw_alloc_complex(R*C);
+
+			    // Replan using wisdom
+			    pl_w = fftw_plan_dft_2d(C, R, x_cx1, x_cx2, FFTW_FORWARD, export_alg);
+			}
+
 			if (pl_w == NULL)
 			{
 				err_handler("Unable to create complex data FFTW plan");
 			}
 
-			// Export 
+			// Export
 			if (fftw_export_wisdom_to_filename(fname.c_str()) == 0)
 			{
 				err_handler("Could not export wisdom to file!");
@@ -306,17 +504,30 @@ namespace sp
 		void export_wisdom_ifft_cx(const std::string fname)
 		{
 			fftw_plan pl_w = NULL;
-			fftw_complex *x_cx1 = fftw_alloc_complex(N);
-			fftw_complex *x_cx2 = fftw_alloc_complex(N);
+			fftw_complex *x_cx1, *x_cx2;
 
-			// Replan using wisdom
-			pl_w = fftw_plan_dft_1d(N, x_cx1, x_cx2, FFTW_BACKWARD, export_alg);
+            if(R==0 || C==0)      // 1D
+            {
+			    x_cx1 = fftw_alloc_complex(N);
+			    x_cx2 = fftw_alloc_complex(N);
+
+			    // Replan using wisdom
+			    pl_w = fftw_plan_dft_1d(N, x_cx2, x_cx1, FFTW_BACKWARD, export_alg);
+			}
+			else
+			{
+			    x_cx1 = fftw_alloc_complex(R*C);
+			    x_cx2 = fftw_alloc_complex(R*C);
+
+			    // Replan using wisdom
+			    pl_w = fftw_plan_dft_2d(C, R, x_cx2, x_cx1, FFTW_BACKWARD, export_alg);
+			}
 			if (pl_w == NULL)
 			{
 				err_handler("Unable to create complex data IFFTW plan");
 			}
 
-			// Export 
+			// Export
 			if (fftw_export_wisdom_to_filename(fname.c_str()) == 0)
 			{
 				err_handler("Could not export wisdom to file!");

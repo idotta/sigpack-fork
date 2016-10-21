@@ -9,7 +9,7 @@ namespace sp
     /// @defgroup gplot GPlot
     /// \brief Collection of Gnuplot functions
     /// @{
-        
+
     ///
     /// \brief Gnuplot class.
     ///
@@ -18,7 +18,7 @@ namespace sp
     ///
     /// Verified with Gnuplot 4.6.5 for Win64 and Linux.
     /// \note In Windows only one class is allowed. Using multiple figures are controlled by a figure number. In Linux we may use one instance per figure.
-    /// 
+    ///
     class gplot
     {
     private:
@@ -31,7 +31,7 @@ namespace sp
         ///
         /// Opens a pipe to gnuplot program. Make sure it is found/accessable by the system.
         ////////////////////////////////////////////////////////////////////////////////////////////
-        gplot::gplot()
+        gplot()
         {
         #if defined(WIN32)
             gnucmd = _popen("gnuplot -persist 2> NUL","w");
@@ -59,7 +59,7 @@ namespace sp
         ////////////////////////////////////////////////////////////////////////////////////////////
         /// \brief Destructor.
         ////////////////////////////////////////////////////////////////////////////////////////////
-        gplot::~gplot()
+        ~gplot()
         {
         #if defined(WIN32)
             _pclose(gnucmd);
@@ -72,7 +72,7 @@ namespace sp
         /// \brief Send command to Gnuplot pipe.
         /// @param cmdstr  Command string
         ////////////////////////////////////////////////////////////////////////////////////////////
-        void gplot::send2gp(const std::string &cmdstr)
+        void send2gp(const std::string &cmdstr)
         {
             std::string tmp=cmdstr+"\n";
             std::fputs(tmp.c_str(), gnucmd );
@@ -83,7 +83,7 @@ namespace sp
         /// \brief Sets the active figure.
         /// @param fig  Figure number
         ////////////////////////////////////////////////////////////////////////////////////////////
-        void gplot::figure(const int fig)
+        void figure(const int fig)
         {
             std::ostringstream tmp_s;
             tmp_s << "set term " << GP_TERM << " " << fig;
@@ -98,43 +98,43 @@ namespace sp
         /// @param x       x position of upper left corner
         /// @param y       y position of upper left corner
         /// @param width   width of window
-        /// @param height  height of window        
+        /// @param height  height of window
         ////////////////////////////////////////////////////////////////////////////////////////////
-        void gplot::window(const int fig, const std::string &name,const int x,const int y,const int width,const int height)
+        void window(const int fig, const std::string &name,const int x,const int y,const int width,const int height)
         {
             std::ostringstream tmp_s;
             tmp_s << "set term " << GP_TERM << " " << fig << " title \"" << name << "\" position " << x << "," << y << " size " << width << "," << height;
             send2gp(tmp_s.str());
             send2gp("reset");
         }
-        
+
         ////////////////////////////////////////////////////////////////////////////////////////////
         /// \brief Configure the figure/window - used in Linux environment where no figure numbers are needed.
         /// @param name    Window name
         /// @param x       x position of upper left corner
         /// @param y       y position of upper left corner
         /// @param width   width of window
-        /// @param height  height of window        
+        /// @param height  height of window
         ////////////////////////////////////////////////////////////////////////////////////////////
-        void gplot::window(const std::string &name,const int x,const int y,const int width,const int height)
+        void window(const std::string &name,const int x,const int y,const int width,const int height)
         {
             window(0,name,x,y,width,height);
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         /// \brief Set linestyle
-        /// @param style  lines | points | linespoints | dots | steps         
+        /// @param style  lines | points | linespoints | dots | steps
         ////////////////////////////////////////////////////////////////////////////////////////////
-        void gplot::set_linestyle(const std::string& style)
+        void set_linestyle(const std::string& style)
         {
             linestyle = style;
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         /// \brief Set label for X-axis.
-        /// @param label label string         
+        /// @param label label string
         ////////////////////////////////////////////////////////////////////////////////////////////
-        void gplot::xlabel(const std::string& label)
+        void xlabel(const std::string& label)
         {
             std::ostringstream tmp_s;
             tmp_s << "set xlabel \"" << label << "\" ";
@@ -143,9 +143,9 @@ namespace sp
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         /// \brief Set label for X-axis.
-        /// @param label label string         
+        /// @param label label string
         ////////////////////////////////////////////////////////////////////////////////////////////
-        void gplot::ylabel(const std::string& label)
+        void ylabel(const std::string& label)
         {
             std::ostringstream tmp_s;
             tmp_s << "set ylabel \"" << label << "\" ";
@@ -154,11 +154,11 @@ namespace sp
 
 		////////////////////////////////////////////////////////////////////////////////////////////
 		/// \brief Set label at position x,y.
-		/// @param x x value         
-		/// @param y y value         
-		/// @param label label string         
+		/// @param x x value
+		/// @param y y value
+		/// @param label label string
 		////////////////////////////////////////////////////////////////////////////////////////////
-		void gplot::label(const double& x, const double& y, const std::string& label)
+		void label(const double& x, const double& y, const std::string& label)
 		{
 			std::ostringstream tmp_s;
 			tmp_s << "set label \"" << label << "\" at " << x << "," << y;
@@ -167,9 +167,9 @@ namespace sp
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         /// \brief Set windowtitle.
-        /// @param name title string         
+        /// @param name title string
         ////////////////////////////////////////////////////////////////////////////////////////////
-        void gplot::title(const std::string& name)
+        void title(const std::string& name)
         {
             std::ostringstream tmp_s;
             tmp_s << "set title \"" << name << " \" ";
@@ -179,9 +179,9 @@ namespace sp
         ////////////////////////////////////////////////////////////////////////////////////////////
         /// \brief Set X-axis range.
         /// @param xmin xmin
-        /// @param xmax xmax      
+        /// @param xmax xmax
         ////////////////////////////////////////////////////////////////////////////////////////////
-        void gplot::xlim(const double xmin, const double xmax)
+        void xlim(const double xmin, const double xmax)
         {
             std::ostringstream tmp_s;
             tmp_s << "set xrange [" << xmin << ":" << xmax << "]";
@@ -191,9 +191,9 @@ namespace sp
         ////////////////////////////////////////////////////////////////////////////////////////////
         /// \brief Set Y-axis range.
         /// @param ymin ymin
-        /// @param ymax ymax  
+        /// @param ymax ymax
         ////////////////////////////////////////////////////////////////////////////////////////////
-        void gplot::ylim(const double ymin, const double ymax)
+        void ylim(const double ymin, const double ymax)
         {
             std::ostringstream tmp_s;
             tmp_s << "set yrange [" << ymin << ":" << ymax << "]";
@@ -203,9 +203,9 @@ namespace sp
         ////////////////////////////////////////////////////////////////////////////////////////////
         /// \brief Plot y vs. x.
         /// @param x x vector
-        /// @param y y vector      
+        /// @param y y vector
         ////////////////////////////////////////////////////////////////////////////////////////////
-        void gplot::plot_str2( arma::vec &x, arma::vec &y)
+        void plot_str2( arma::vec &x, arma::vec &y)
         {
             std::ostringstream tmp_s;
             for(unsigned int n=0;n<y.size();n++)
@@ -220,14 +220,14 @@ namespace sp
         ////////////////////////////////////////////////////////////////////////////////////////////
         /// \brief Plot y vs. x. with label
         /// @param x     x vector
-        /// @param y     y vector      
-        /// @param label plot label      
+        /// @param y     y vector
+        /// @param label plot label
         ////////////////////////////////////////////////////////////////////////////////////////////
-        void gplot::plot( arma::vec &x, arma::vec &y, const std::string& label="")
+        void plot( arma::vec &x, arma::vec &y, const std::string& label="")
         {
             std::ostringstream tmp_s;
 			if (label.empty())
-			{ 
+			{
 				send2gp("set nokey");
 			    tmp_s << "plot '-' with " << linestyle;
 			}
@@ -235,7 +235,7 @@ namespace sp
 			{
 				send2gp("set key noautotitle");
 				tmp_s << "plot '-' title \"" << label << "\" with " << linestyle;
-			}            
+			}
 			send2gp("set grid");
             send2gp(tmp_s.str());
             plot_str2(x,y);
@@ -243,10 +243,10 @@ namespace sp
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         /// \brief Plot y with label
-        /// @param y     y vector      
-        /// @param label plot label      
+        /// @param y     y vector
+        /// @param label plot label
         ////////////////////////////////////////////////////////////////////////////////////////////
-        void gplot::plot(arma::vec &y, const std::string& label="")
+        void plot(arma::vec &y, const std::string& label="")
         {
             arma::vec t(y.size());
             t = arma::linspace(1,y.size(),y.size());
@@ -256,12 +256,12 @@ namespace sp
         ////////////////////////////////////////////////////////////////////////////////////////////
         /// \brief Plot y1 and y2 vs. x with label
         /// @param x      x vector
-        /// @param y1     y1 vector      
-        /// @param y2     y2 vector      
-        /// @param label1 plot label 1      
-        /// @param label2 plot label 2    
+        /// @param y1     y1 vector
+        /// @param y2     y2 vector
+        /// @param label1 plot label 1
+        /// @param label2 plot label 2
         ////////////////////////////////////////////////////////////////////////////////////////////
-        void gplot::plot( arma::vec &x, arma::vec &y1, arma::vec &y2, const std::string& label1, const std::string& label2)
+        void plot( arma::vec &x, arma::vec &y1, arma::vec &y2, const std::string& label1, const std::string& label2)
         {
             std::ostringstream tmp_s;
             send2gp("set key noautotitle");
@@ -274,12 +274,12 @@ namespace sp
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         /// \brief Plot y1 and y2 with label
-        /// @param y1     y1 vector      
-        /// @param y2     y2 vector      
-        /// @param label1 plot label 1      
-        /// @param label2 plot label 2    
+        /// @param y1     y1 vector
+        /// @param y2     y2 vector
+        /// @param label1 plot label 1
+        /// @param label2 plot label 2
         ////////////////////////////////////////////////////////////////////////////////////////////
-        void gplot::plot(arma::vec &y1, arma::vec &y2, const std::string& label1, const std::string& label2)
+        void plot(arma::vec &y1, arma::vec &y2, const std::string& label1, const std::string& label2)
         {
             arma::vec t(y1.size());
             t = arma::linspace(1,y1.size(),y1.size());
@@ -288,27 +288,27 @@ namespace sp
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Scatter plot 
-        /// @param x    x vector      
-        /// @param y    y vector      
-        /// @param label plot label      
+        /// \brief Scatter plot
+        /// @param x    x vector
+        /// @param y    y vector
+        /// @param label plot label
         ////////////////////////////////////////////////////////////////////////////////////////////
-        void gplot::scatter( arma::vec &x, arma::vec &y, const std::string& label="")
+        void scatter( arma::vec &x, arma::vec &y, const std::string& label="")
         {
             set_linestyle("points");
             plot(x,y,label);
         }
-        
+
         ////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Scatter plot - dual 
-        /// @param x1     x1 vector      
-        /// @param y1     y1 vector      
-        /// @param label1 plot label1      
-        /// @param x2     x2 vector      
-        /// @param y2     y2 vector      
-        /// @param label2 plot label2      
+        /// \brief Scatter plot - dual
+        /// @param x1     x1 vector
+        /// @param y1     y1 vector
+        /// @param label1 plot label1
+        /// @param x2     x2 vector
+        /// @param y2     y2 vector
+        /// @param label2 plot label2
         ////////////////////////////////////////////////////////////////////////////////////////////
-        void gplot::scatter( arma::vec &x1, arma::vec &y1, const std::string& label1,
+        void scatter( arma::vec &x1, arma::vec &y1, const std::string& label1,
             arma::vec &x2, arma::vec &y2, const std::string& label2)
         {
             set_linestyle("points");
@@ -323,9 +323,9 @@ namespace sp
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         /// \brief Plot mat as image
-        /// @param x     x matrix      
+        /// @param x     x matrix
         ////////////////////////////////////////////////////////////////////////////////////////////
-        void gplot::image( arma::mat &x)
+        void image( arma::mat &x)
         {
             std::ostringstream tmp_s;
             xlim(-0.5,x.n_cols-0.5);
@@ -347,10 +347,34 @@ namespace sp
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Plot mat as mesh
-        /// @param x     x matrix      
+        /// \brief Plot cube as image
+        /// @param x     x matrix (R,G,B)
         ////////////////////////////////////////////////////////////////////////////////////////////
-        void gplot::mesh( arma::mat &x)
+        void image( arma::cube &x)
+        {
+            std::ostringstream tmp_s;
+            xlim(-0.5,x.n_cols-0.5);
+            ylim(x.n_rows-0.5,-0.5);
+            tmp_s.str(""); // Clear buffer
+            tmp_s << "plot '-' with rgbimage";
+            send2gp(tmp_s.str());
+            for(unsigned int r=0;r<x.n_rows;r++)
+            {
+                tmp_s.str("");  // Clear buffer
+                for(unsigned int c=0;c<x.n_cols;c++)
+                {
+                    tmp_s << " " << c << " " << r << " " << x(r,c,0) << " " << x(r,c,1) << " " << x(r,c,2) << std::endl;
+                }
+                send2gp(tmp_s.str());
+            }
+            send2gp("e");
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        /// \brief Plot mat as mesh
+        /// @param x     x matrix
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        void mesh( arma::mat &x)
         {
             std::ostringstream tmp_s;
             send2gp("unset key");
@@ -373,9 +397,9 @@ namespace sp
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         /// \brief Plot mat as surf
-        /// @param x     x matrix      
+        /// @param x     x matrix
         ////////////////////////////////////////////////////////////////////////////////////////////
-        void gplot::surf( arma::mat &x)
+        void surf( arma::mat &x)
         {
             send2gp("set pm3d");
             mesh(x);
@@ -398,7 +422,7 @@ namespace sp
 		///
 		/// \note When 'latex' output is used the '\' must be escaped by '\\\\' e.g set_xlabel("Frequency $\\\\omega = 2 \\\\pi f$")
 		////////////////////////////////////////////////////////////////////////////////////////////
-		void gplot::set_output(const std::string& name)
+		void set_output(const std::string& name)
 		{
 			size_t found = name.find_last_of(".");
 			std::string ext;
@@ -456,7 +480,7 @@ namespace sp
 		////////////////////////////////////////////////////////////////////////////////////////////
 		/// \brief Restore output terminal.
 		////////////////////////////////////////////////////////////////////////////////////////////
-		void gplot::restore_output(void)
+		void restore_output(void)
 		{
 			std::ostringstream tmp_s;
 			tmp_s << "set terminal " << GP_TERM;
@@ -464,7 +488,7 @@ namespace sp
 		}
     }; // End Gnuplot Class
 
-  
+
     /// @}
 
 } // end namespace

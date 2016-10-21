@@ -9,6 +9,10 @@
 //  1.03	Claes Rolén		2015-04-26	Added 'parser' class, 'err_handler','wrn_handler'
 //                                      'freqz','phasez'
 //  1.04	Claes Rolén		2015-08-01	Added FFTW class, 'unwrap', 'update_coeffs' + commenting for Doxygen
+//  1.05	Claes Rolén		2015-10-11	Added plot to file in gplot 
+//  1.06	Claes Rolén		2015-12-30	Added support for importing/exporting Wisdom in FFTW 
+//  1.07	Claes Rolén		2016-10-20	Added support for FFTW 2-D and simple image I/O 
+
 
 
 #ifndef ARMA_INCLUDES
@@ -28,6 +32,8 @@
 #ifdef HAVE_FFTW
   #include "fftw/fftw.h"
 #endif
+#include "image/image.h"
+
 #endif
 
 /// \mainpage notitle
@@ -49,6 +55,7 @@
 /// \li Up/Downsampling
 /// \li Config file parser
 /// \li FFTW support
+/// \li Simple image I/O (.pbm,.pgm and .ppm formats)
 ///
 /// \section install_sec Installation
 /// Download Armadillo and SigPack and install/extract them to your install directory. 
