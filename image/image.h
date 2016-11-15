@@ -129,7 +129,7 @@ public:
     /// \brief Write the .pnm file.
     ///
     /// @returns true if success
-    /// @param fnamen File name
+    /// @param fname  File name
     /// @param _type  File name
     /// @param img    Image data
     /// @param info   File comments
@@ -184,8 +184,8 @@ public:
     /// \brief Write the .pnm file.
     ///
     /// @returns true if success
-    /// @param fnamen File name
-    /// @param _type  File name
+    /// @param fname  File name
+    /// @param _type  Image type
     /// @param img    Image data
     /// @param info   File comments
     ////////////////////////////////////////////////////////////////////////////////////////////
@@ -306,8 +306,8 @@ public:
 /// \brief Read image
 ///
 /// @returns true if success
-/// @param fnamen File name
-/// @param img Image data
+/// @param fname File name
+/// @param img   Image data
 ////////////////////////////////////////////////////////////////////////////////////////////
     bool read(std::string fname, arma::cube& img)
     {
@@ -376,7 +376,7 @@ public:
 /// \brief Read image
 ///
 /// @returns true if success
-/// @param fnamen File name
+/// @param fname File name
 /// @param img Image data
 ////////////////////////////////////////////////////////////////////////////////////////////
     bool read(std::string fname, arma::mat& img)

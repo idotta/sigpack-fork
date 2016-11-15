@@ -56,7 +56,8 @@ namespace sp
 		//++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		////////////////////////////////////////////////////////////////////////////////////////////
 		/// \brief Constructor.
-		/// @param _N FFT length
+		/// @param _R FFT Nr of rows
+		/// @param _C FFT Nr of cols
 		/// @param _alg FFTW algorithm selection, Default FFTW_ESTIMATE
 		////////////////////////////////////////////////////////////////////////////////////////////
 		FFTW(int _R, int _C, int _alg = FFTW_ESTIMATE)

@@ -283,8 +283,54 @@ namespace sp
         {
             arma::vec t(y1.size());
             t = arma::linspace(1,y1.size(),y1.size());
-            plot(t,y1,label1);
-            plot(t,y2,label2);
+            plot(t,y1,y2,label1,label2);
+        }
+
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        /// \brief Plot multiple y vs. x
+        /// @param x      x vector
+        /// @param y      y matrix with data in rows
+        /// @param label  data label prefix
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        void plot( arma::vec &x, arma::mat &y, const std::string& label="")
+        {
+            unsigned int R =  y.n_rows;
+
+            std::ostringstream tmp_s;
+            send2gp("set key noautotitle");
+            send2gp("set grid");
+            if (label.empty())
+            {
+                tmp_s << "plot '-' with " << linestyle;
+                for(unsigned int r=1; r<R; r++)
+                    tmp_s << " ,'-' with " << linestyle;
+            }
+            else
+            {
+                tmp_s << "plot '-' title \"" << label << "1\" with " << linestyle;
+                for(unsigned int r=1; r<R; r++)
+                    tmp_s << " ,'-' title \"" << label << r+1 << "\" with " << linestyle;
+            }
+            send2gp(tmp_s.str());
+
+            for(unsigned int r=0; r<y.n_rows; r++)
+            {
+                arma::vec line = arma::conv_to<arma::vec>::from(y.row(r));
+                plot_str2(x,line);
+            }
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        /// \brief Plot multiple y
+        /// Each line plot is a row in matrix
+        /// @param y     y matrix with data in rows
+        /// @param label data label prefix
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        void plot( arma::mat &y, const std::string& label="")
+        {
+            arma::vec t = arma::linspace(1,y.n_cols,y.n_cols);
+            plot(t,y,label);
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////
