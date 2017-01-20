@@ -18,8 +18,8 @@ namespace sp
     /// @param x Input vector
     /// @param W Window function vector. NB! Must be same size as input vector
     ////////////////////////////////////////////////////////////////////////////////////////////
-   template <class T1>
-    arma::cx_vec spectrum(arma::Col<T1> &x, arma::vec &W)
+    template <class T1>
+    arma::cx_vec spectrum(const arma::Col<T1>& x, const arma::vec& W)
     {
         arma::cx_vec Pxx(x.size());
         double wc = sum(W);     // Window correction factor
@@ -34,7 +34,7 @@ namespace sp
     /// @param W Window function vector. NB! Must be same size as input vector
     ////////////////////////////////////////////////////////////////////////////////////////////
     template <class T1>
-    arma::vec psd(arma::Col<T1> &x, arma::vec &W)
+    arma::vec psd(const arma::Col<T1>& x, const arma::vec& W)
     {
         arma::cx_vec X(x.size());
         arma::vec Pxx(x.size());
@@ -49,13 +49,13 @@ namespace sp
     /// @param x Input vector
     ////////////////////////////////////////////////////////////////////////////////////////////
     template <class T1>
-    arma::vec psd(arma::Col<T1> &x)
+    arma::vec psd(const arma::Col<T1>& x)
     {
         arma::vec W;
-        W = hamming(x.size());
+        W = hanning(x.size());
         return psd(x,W);
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////////////////////
     /// \brief Spectrogram calculation using Hamming windowed data.
     ///
@@ -66,26 +66,26 @@ namespace sp
     /// @param Noverl FFT overlap size
     ////////////////////////////////////////////////////////////////////////////////////////////
     template <class T1>
-    arma::cx_mat specgram_cx(arma::Col<T1> &x, const int Nfft=512, const int Noverl=256)
+    arma::cx_mat specgram_cx(const arma::Col<T1>& x, const arma::uword Nfft=512, const arma::uword Noverl=256)
     {
         arma::cx_mat Pw;
 
         //Def params
-        int N = x.size();
-        int D = Nfft-Noverl;
-        int m = 0;
+        arma::uword N = x.size();
+        arma::uword D = Nfft-Noverl;
+        arma::uword m = 0;
         if(N > Nfft)
         {
             arma::Col<T1> xk(Nfft);
             arma::vec W(Nfft);
 
-            W = hamming(Nfft);
-            int U = int(floor((N-Noverl)/double(D)));
+            W = hanning(Nfft);
+            arma::uword U = floor((N-Noverl)/double(D));
             Pw.set_size(Nfft,U);
             Pw.zeros();
 
             // Avg loop
-            for(int k=0;k<N-Nfft;k+=D)
+            for(arma::uword k=0; k<N-Nfft; k+=D)
             {
                 xk = x.rows(k,k+Nfft-1);       // Pick out chunk
                 Pw.col(m++) = spectrum(xk,W);  // Calculate spectrum
@@ -94,7 +94,7 @@ namespace sp
         else
         {
             arma::vec W(N);
-            W = hamming(N);
+            W = hanning(N);
             Pw.set_size(N,1);
             Pw = spectrum(x,W);
         }
@@ -111,7 +111,7 @@ namespace sp
     /// @param Noverl FFT overlap size
     ////////////////////////////////////////////////////////////////////////////////////////////
     template <class T1>
-    arma::mat specgram(arma::Col<T1> &x, const int Nfft=512, const int Noverl=256)
+    arma::mat specgram(const arma::Col<T1>& x, const arma::uword Nfft=512, const arma::uword Noverl=256)
     {
         arma::cx_mat Pw;
         arma::mat Sg;
@@ -119,7 +119,7 @@ namespace sp
         Sg = real(Pw % conj(Pw));              // Calculate power spectrum
         return Sg;
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////////////////////
     /// \brief Phase spectrogram calculation.
     ///
@@ -130,7 +130,7 @@ namespace sp
     /// @param Noverl FFT overlap size
     ////////////////////////////////////////////////////////////////////////////////////////////
     template <class T1>
-    arma::mat specgram_ph(arma::Col<T1> &x, const int Nfft=512, const int Noverl=256)
+    arma::mat specgram_ph(const arma::Col<T1>& x, const arma::uword Nfft=512, const arma::uword Noverl=256)
     {
         arma::cx_mat Pw;
         arma::mat Sg;
@@ -149,17 +149,17 @@ namespace sp
     /// @param Noverl FFT overlap size
     ////////////////////////////////////////////////////////////////////////////////////////////
     template <class T1>
-    arma::vec pwelch_ph(arma::Col<T1> &x, const int Nfft=512, const int Noverl=256)
+    arma::vec pwelch_ph(const arma::Col<T1>& x, const arma::uword Nfft=512, const arma::uword Noverl=256)
     {
         arma::mat Ph;
         Ph  = specgram_ph(x,Nfft,Noverl);
-        return arma::mean(Ph ,1);
+        return arma::mean(Ph,1);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////
     /// \brief Power spectrum calculation using Welsh's method.
     ///
-    /// _abs(pwelch(x,Nfft,Noverl))_ is equivalent to Matlab's: _pwelch(x,Nfft,Noverl,'twosided','power')_ <br> 
+    /// _abs(pwelch(x,Nfft,Noverl))_ is equivalent to Matlab's: _pwelch(x,Nfft,Noverl,'twosided','power')_ <br>
     /// See Welsh's method at [Wikipedia](https://en.wikipedia.org/wiki/Welch%27s_method)
     /// @returns A power spectrum vector
     /// @param x Input vector
@@ -167,7 +167,7 @@ namespace sp
     /// @param Noverl FFT overlap size
     ////////////////////////////////////////////////////////////////////////////////////////////
     template <class T1>
-    arma::vec pwelch(arma::Col<T1> &x, const int Nfft=512, const int Noverl=256)
+    arma::vec pwelch(const arma::Col<T1>& x, const arma::uword Nfft=512, const arma::uword Noverl=256)
     {
         arma::mat Pxx;
         Pxx = specgram(x,Nfft,Noverl);

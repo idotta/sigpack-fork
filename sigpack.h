@@ -13,10 +13,12 @@
 //  1.0.6	Claes Rolén		2015-12-30	Added support for importing/exporting Wisdom in FFTW
 //  1.0.7	Claes Rolén		2016-10-20	Added support for FFTW 2-D and simple image I/O
 //  1.0.8   Claes Rolén     2016-11-15  Added adaptive filters - LMS, N-LMS and RLS. New line plot function of matrix data.
+//  1.1.1   Claes Rolén     2017-01-20  Cleanup, added Kalman and Newton adaptive filters
+
 
 #define SP_VERSION_MAJOR 1
-#define SP_VERSION_MINOR 0
-#define SP_VERSION_PATCH 8
+#define SP_VERSION_MINOR 1
+#define SP_VERSION_PATCH 1
 
 
 #ifndef ARMA_INCLUDES
@@ -60,11 +62,11 @@
 /// \li Config file parser
 /// \li FFTW support for vector and matrix
 /// \li Simple image I/O (.pbm,.pgm and .ppm formats)
-/// \li Adaptive filters - LMS, N-LMS and RLS
+/// \li Adaptive filters - LMS, N-LMS, RLS, Kalman and Newton
 ///
 /// \section install_sec Installation
 /// Download Armadillo and SigPack and install/extract them to your install directory.
-/// Armadillo-4.320.2 version is used in the examples hereafter.
+/// Armadillo-7.4 version is used in the examples hereafter.
 /// For Windows 64bit users: add the \<Armadillo install dir\>\\examples\\lib_win64
 /// to your path in your environment variables.
 

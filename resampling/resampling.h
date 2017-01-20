@@ -17,13 +17,13 @@ namespace sp
     /// @param p Upsampling factor
     ////////////////////////////////////////////////////////////////////////////////////////////
     template <class T1>
-    arma::Col<T1> upsample(arma::Col<T1> &x, const int p )
+    arma::Col<T1> upsample(const arma::Col<T1>& x, const int p )
     {
         long int N = x.size();
         arma::Col<T1> y;
         y.set_size(p*N);
         y.zeros();
-        for(long int n=0;n<N;n++)
+        for(long int n=0; n<N; n++)
             y[p*n] = x[n];
         return y;
     }
@@ -38,7 +38,7 @@ namespace sp
     /// @param K Number of filter taps
     ////////////////////////////////////////////////////////////////////////////////////////////
     template <class T1>
-    arma::Col<T1> upfir(arma::Col<T1> &x, const int p, const int K )
+    arma::Col<T1> upfir(const arma::Col<T1>& x, const int p, const int K )
     {
         FIR_filt<T1,double,T1> AA;
         AA.set_coeffs(fir1(K,1/float(p)));
@@ -52,12 +52,12 @@ namespace sp
     /// @param q Downsampling factor
     ////////////////////////////////////////////////////////////////////////////////////////////
     template <class T1>
-    arma::Col<T1> downsample(arma::Col<T1> &x, const int q )
+    arma::Col<T1> downsample(const arma::Col<T1>& x, const int q )
     {
         arma::Col<T1> y;
         int N = int(floor(1.0*x.size()/q));
         y.set_size(N);
-        for(long int n=0;n<N;n++)
+        for(long int n=0; n<N; n++)
             y[n] = x[n*q];
         return y;
     }
@@ -72,12 +72,12 @@ namespace sp
     /// @param K Number of filter taps
     ////////////////////////////////////////////////////////////////////////////////////////////
     template <class T1>
-    arma::Col<T1> downfir(arma::Col<T1> &x, const int q, const int K )
+    arma::Col<T1> downfir(const arma::Col<T1>& x, const int q, const int K )
     {
         FIR_filt<T1,double,T1> AA;
         AA.set_coeffs(fir1(K,1/float(q)));
         return downsample(AA.filter(x),q);
     }
-    /// @}    
+    /// @}
 } // end namespace
 #endif
