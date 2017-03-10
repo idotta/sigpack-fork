@@ -487,61 +487,96 @@ namespace sp
 
             ////////////////////////////////////////////////////////////////////////////////////////////
             /// \brief Set linestyle to Matlab 'parula' NB! doesn't work with X11 -terminal
+            /// Data from https://github.com/Gnuplotting/gnuplot-palettes
             ////////////////////////////////////////////////////////////////////////////////////////////
             void set_parula_line(void)
             {
-                send2gp("set style line  1 lt 1 lc rgb '#352a87' "); // blue
-                send2gp("set style line  2 lt 1 lc rgb '#0f5cdd' "); // blue
-                send2gp("set style line  3 lt 1 lc rgb '#1481d6' "); // blue
-                send2gp("set style line  4 lt 1 lc rgb '#06a4ca' "); // cyan
-                send2gp("set style line  5 lt 1 lc rgb '#2eb7a4' "); // green
-                send2gp("set style line  6 lt 1 lc rgb '#87bf77' "); // green
-                send2gp("set style line  7 lt 1 lc rgb '#d1bb59' "); // orange
-                send2gp("set style line  8 lt 1 lc rgb '#fec832' "); // orange
-                send2gp("set style line  9 lt 1 lc rgb '#f9fb0e' "); // yellow
-                send2gp("set style line 11 lt 1 lc rgb '#0072bd' "); // blue
-                send2gp("set style line 12 lt 1 lc rgb '#d95319' "); // orange
-                send2gp("set style line 13 lt 1 lc rgb '#edb120' "); // yellow
-                send2gp("set style line 14 lt 1 lc rgb '#7e2f8e' "); // purple
-                send2gp("set style line 15 lt 1 lc rgb '#77ac30' "); // green
-                send2gp("set style line 16 lt 1 lc rgb '#4dbeee' "); // light-blue
-                send2gp("set style line 17 lt 1 lc rgb '#a2142f' "); // red
+                send2gp("set linetype 1 lc rgb '#0072bd' "); // blue
+                send2gp("set linetype 2 lc rgb '#d95319' "); // orange
+                send2gp("set linetype 3 lc rgb '#edb120' "); // yellow
+                send2gp("set linetype 4 lc rgb '#7e2f8e' "); // purple
+                send2gp("set linetype 5 lc rgb '#77ac30' "); // green
+                send2gp("set linetype 6 lc rgb '#4dbeee' "); // light-blue
+                send2gp("set linetype 7 lc rgb '#a2142f' "); // red
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////////////////
+            /// \brief Set linestyle to Matlab 'jet' NB! doesn't work with X11 -terminal
+            /// Data from https://github.com/Gnuplotting/gnuplot-palettes
+            ////////////////////////////////////////////////////////////////////////////////////////////
+            void set_jet_line(void)
+            {
+                send2gp("set linetype 1 lc rgb '#0000ff' "); // blue
+                send2gp("set linetype 2 lc rgb '#007f00' "); // green
+                send2gp("set linetype 3 lc rgb '#ff0000' "); // red
+                send2gp("set linetype 4 lc rgb '#00bfbf' "); // cyan
+                send2gp("set linetype 5 lc rgb '#bf00bf' "); // pink
+                send2gp("set linetype 6 lc rgb '#bfbf00' "); // yellow
+                send2gp("set linetype 7 lc rgb '#3f3f3f' "); // black
+            }
+            ////////////////////////////////////////////////////////////////////////////////////////////
+            /// \brief Set linestyle to Matlab 'parula' NB! doesn't work with X11 -terminal
+            /// Data from https://github.com/Gnuplotting/gnuplot-palettes
+            ////////////////////////////////////////////////////////////////////////////////////////////
+            void set_set1_line(void)
+            {
+                send2gp("set linetype 1 lc rgb '#E41A1C' ");// red
+                send2gp("set linetype 2 lc rgb '#377EB8' ");// blue
+                send2gp("set linetype 3 lc rgb '#4DAF4A' ");// green
+                send2gp("set linetype 4 lc rgb '#984EA3' ");// purple
+                send2gp("set linetype 5 lc rgb '#FF7F00' ");// orange
+                send2gp("set linetype 6 lc rgb '#FFFF33' ");// yellow
+                send2gp("set linetype 7 lc rgb '#A65628' ");// brown
+                send2gp("set linetype 8 lc rgb '#F781BF' ");// pink
+
+                send2gp("set palette maxcolors 8");
+                char str[] ="set palette defined ( \
+                      0 '#E41A1C',\
+                      1 '#377EB8',\
+                      2 '#4DAF4A',\
+                      3 '#984EA3',\
+                      4 '#FF7F00',\
+                      5 '#FFFF33',\
+                      6 '#A65628',\
+                      7 '#F781BF')";
+                send2gp(str);
             }
 
             ////////////////////////////////////////////////////////////////////////////////////////////
             /// \brief Set palette to Matlab 'jet'
-            ///  See https://github.com/Gnuplotting/gnuplot-palettes
+            /// Data from https://github.com/Gnuplotting/gnuplot-palettes
             ////////////////////////////////////////////////////////////////////////////////////////////
             void set_jet_palette(void)
             {
                 char str[] ="set palette defined ( \
-              0 '#000090',\
-              1 '#000fff',\
-              2 '#0090ff',\
-              3 '#0fffee',\
-              4 '#90ff70',\
-              5 '#ffee00',\
-              6 '#ff7000',\
-              7 '#ee0000',\
-              8 '#7f0000')";
+                      0 '#000090',\
+                      1 '#000fff',\
+                      2 '#0090ff',\
+                      3 '#0fffee',\
+                      4 '#90ff70',\
+                      5 '#ffee00',\
+                      6 '#ff7000',\
+                      7 '#ee0000',\
+                      8 '#7f0000')";
                 send2gp(str);
             }
 
             ////////////////////////////////////////////////////////////////////////////////////////////
             /// \brief Set palette to Matlab 'parula'
+            /// Data from https://github.com/Gnuplotting/gnuplot-palettes
             ////////////////////////////////////////////////////////////////////////////////////////////
             void set_parula_palette(void)
             {
                 char str[] ="set palette defined (\
-              0 '#352a87',\
-              1 '#0363e1',\
-              2 '#1485d4',\
-              3 '#06a7c6',\
-              4 '#38b99e',\
-              5 '#92bf73',\
-              6 '#d9ba56',\
-              7 '#fcce2e',\
-              8 '#f9fb0e')";
+                      0 '#352a87',\
+                      1 '#0363e1',\
+                      2 '#1485d4',\
+                      3 '#06a7c6',\
+                      4 '#38b99e',\
+                      5 '#92bf73',\
+                      6 '#d9ba56',\
+                      7 '#fcce2e',\
+                      8 '#f9fb0e')";
                 send2gp(str);
             }
 
@@ -552,14 +587,14 @@ namespace sp
             void set_coolwarm_palette(void)
             {
                 char str[] = "set palette defined (\
-              0 '#5548C1', \
-              1 '#7D87EF', \
-              2 '#A6B9FF', \
-              3 '#CDD7F0', \
-              4 '#EBD1C2', \
-              5 '#F3A889', \
-              6 '#DE6A53', \
-              7 '#B10127')";
+                      0 '#5548C1', \
+                      1 '#7D87EF', \
+                      2 '#A6B9FF', \
+                      3 '#CDD7F0', \
+                      4 '#EBD1C2', \
+                      5 '#F3A889', \
+                      6 '#DE6A53', \
+                      7 '#B10127')";
                 send2gp(str);
             }
 
@@ -570,17 +605,17 @@ namespace sp
             void set_blackbody_palette(void)
             {
                 char str[] = "set palette defined (\
-              0 '#000000', \
-              1 '#2B0F6B', \
-              2 '#5D00CB', \
-              3 '#C60074', \
-              4 '#EB533C', \
-              5 '#F59730', \
-              6 '#E9D839', \
-              7 '#FFFFFF')";
+                      0 '#000000', \
+                      1 '#2B0F6B', \
+                      2 '#5D00CB', \
+                      3 '#C60074', \
+                      4 '#EB533C', \
+                      5 '#F59730', \
+                      6 '#E9D839', \
+                      7 '#FFFFFF')";
                 send2gp(str);
             }
-            
+
             ////////////////////////////////////////////////////////////////////////////////////////////
             /// \brief Save plot to file.
             /// @param name filename
@@ -664,7 +699,7 @@ namespace sp
                 std::string s = tmp_s.str();
                 send2gp(s.c_str());
             }
-            
+
             ////////////////////////////////////////////////////////////////////////////////////////////
             /// \brief Set output terminal.
             ////////////////////////////////////////////////////////////////////////////////////////////
