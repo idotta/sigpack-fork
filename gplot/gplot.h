@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #ifndef SP_GPLOT_H
 #define SP_GPLOT_H
+#include <vector>
 namespace sp
 {
     ///
@@ -23,8 +24,39 @@ namespace sp
     {
         private:
             FILE*           gnucmd;          ///< File handle to pipe
-            std::string     linestyle;       ///< Linestyle string as in Gnuplot doc.
             std::string     term;
+            int             fig_ix;
+            int             plot_ix;
+
+            struct plot_data_s
+            {
+                std::string label;
+                std::string linespec;
+            };
+
+            std::vector<plot_data_s> plotlist;
+
+            ////////////////////////////////////////////////////////////////////////////////////////////
+            /// \brief Plot y vs. x.
+            /// @param x x vector
+            /// @param y y vector
+            ////////////////////////////////////////////////////////////////////////////////////////////
+            template <typename T1, typename T2>
+            void plot_str2( const T1& x, const T2& y)
+            {
+                std::ostringstream tmp_s;
+                std::string s;
+                tmp_s << "$Dxy" << plot_ix << " << EOD \n";
+                arma::uword Nelem = x.n_elem;
+                for(arma::uword n=0; n<Nelem; n++)
+                {
+                    tmp_s << x(n) << " " << y(n);
+                    s = tmp_s.str();
+                    send2gp(s.c_str());
+                    tmp_s.str(""); // Clear buffer
+                }
+                send2gp("EOD");
+            }
 
         public:
             ////////////////////////////////////////////////////////////////////////////////////////////
@@ -54,7 +86,10 @@ namespace sp
                 setvbuf(gnucmd, NULL, _IOLBF, 512);
 
                 // Set global params
-                linestyle = "lines";
+                plot_ix   = 0;
+                fig_ix    = 0;
+                plotlist.clear();
+
             }
 
             ////////////////////////////////////////////////////////////////////////////////////////////
@@ -78,7 +113,7 @@ namespace sp
                 std::string s_in(cmdstr);
                 std::string tmp=s_in+"\n";
                 std::fputs(tmp.c_str(), gnucmd );
-                //        std::cout << tmp.c_str() << std::endl;
+//                std::cout << tmp.c_str() << std::endl;
             }
 
             ////////////////////////////////////////////////////////////////////////////////////////////
@@ -87,6 +122,7 @@ namespace sp
             ////////////////////////////////////////////////////////////////////////////////////////////
             void figure(const int fig)
             {
+                fig_ix = fig;
                 std::ostringstream tmp_s;
                 tmp_s << "set term " << term << " " << fig;
                 std::string s = tmp_s.str();
@@ -105,6 +141,7 @@ namespace sp
             ////////////////////////////////////////////////////////////////////////////////////////////
             void window(const int fig, const char* name,const int x,const int y,const int width,const int height)
             {
+                fig_ix = fig;
                 std::ostringstream tmp_s;
                 tmp_s << "set term " << term << " " << fig << " title \"" << name << "\" position " << x << "," << y << " size " << width << "," << height;
                 std::string s = tmp_s.str();
@@ -138,12 +175,19 @@ namespace sp
             }
 
             ////////////////////////////////////////////////////////////////////////////////////////////
-            /// \brief Set linestyle
-            /// @param style  lines | points | linespoints | dots | steps
+            /// \brief Set grid
             ////////////////////////////////////////////////////////////////////////////////////////////
-            void set_linestyle(const char* style)
+            void grid_on(void)
             {
-                linestyle = style;
+                send2gp("set grid");
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////////////////
+            /// \brief Set grid
+            ////////////////////////////////////////////////////////////////////////////////////////////
+            void grid_off(void)
+            {
+                send2gp("unset grid");
             }
 
             ////////////////////////////////////////////////////////////////////////////////////////////
@@ -223,177 +267,114 @@ namespace sp
             }
 
             ////////////////////////////////////////////////////////////////////////////////////////////
-            /// \brief Plot y vs. x.
-            /// @param x x vector
-            /// @param y y vector
-            ////////////////////////////////////////////////////////////////////////////////////////////
-            void plot_str2( const arma::vec& x, const arma::vec& y)
-            {
-                std::ostringstream tmp_s;
-                for(arma::uword n=0; n<y.size(); n++)
-                {
-                    tmp_s << x(n) << " " << y(n);
-                    std::string s = tmp_s.str();
-                    send2gp(s.c_str());
-                    tmp_s.str(""); // Clear buffer
-                }
-                send2gp("e");
-            }
-
-            ////////////////////////////////////////////////////////////////////////////////////////////
-            /// \brief Plot multiple y vs. x
+            /// \brief Push plot y vs. x with label and linespec
             /// @param x      x vector
-            /// @param y      y matrix with data in rows
-            /// @param label  data label prefix
+            /// @param y      y vector
+            /// @param lb     label
+            /// @param ls     line spec
             ////////////////////////////////////////////////////////////////////////////////////////////
-            void plot( const arma::vec& x, const arma::mat& y, const char* label="")
+            template <typename T1, typename T2>
+            void plot_add( const T1& x, const T2& y, const std::string lb, const std::string ls="lines")
             {
-                arma::uword R =  y.n_rows;
-                std::string label_s(label);
-                std::ostringstream tmp_s;
-                send2gp("set key noautotitle");
-                send2gp("set grid");
-                if (label_s.empty())
-                {
-                    tmp_s << "plot '-' with " << linestyle;
-                    for(arma::uword r=1; r<R; r++)
-                        tmp_s << " ,'-' with " << linestyle;
-                }
-                else
-                {
-                    tmp_s << "plot '-' title \"" << label_s << "1\" with " << linestyle;
-                    for(arma::uword r=1; r<R; r++)
-                        tmp_s << " ,'-' title \"" << label_s << r+1 << "\" with " << linestyle;
-                }
-                std::string s = tmp_s.str();
-                send2gp(s.c_str());
+                plot_data_s pd;
 
-                for(arma::uword r=0; r<y.n_rows; r++)
-                {
-                    arma::vec line = arma::conv_to<arma::vec>::from(y.row(r));
-                    plot_str2(x,line);
-                }
-            }
+                pd.linespec = ls;
+                pd.label    = lb;
 
-            ////////////////////////////////////////////////////////////////////////////////////////////
-            /// \brief Plot multiple y
-            /// Each line plot is a row in matrix
-            /// @param y     y matrix with data in rows
-            /// @param label data label prefix
-            ////////////////////////////////////////////////////////////////////////////////////////////
-            void plot( const arma::mat& y, const char* label="")
-            {
-                arma::vec t = arma::linspace(1,y.n_cols,y.n_cols);
-                plot(t,y,label);
-            }
-
-            ////////////////////////////////////////////////////////////////////////////////////////////
-            /// \brief Plot y vs. x. with label
-            /// @param x     x vector
-            /// @param y     y vector
-            /// @param label plot label
-            ////////////////////////////////////////////////////////////////////////////////////////////
-            void plot( const arma::vec& x, const arma::vec& y, const char* label="")
-            {
-                std::ostringstream tmp_s;
-                std::string label_s(label);
-
-                if (label_s.empty())
-                {
-                    send2gp("set nokey");
-                    tmp_s << "plot '-' with " << linestyle;
-                }
-                else
-                {
-                    send2gp("set key noautotitle");
-                    tmp_s << "plot '-' title \"" << label_s << "\" with " << linestyle;
-                }
-                send2gp("set grid");
-                std::string s = tmp_s.str();
-                send2gp(s.c_str());
+                plotlist.push_back(pd);
                 plot_str2(x,y);
+                plot_ix++;
             }
 
             ////////////////////////////////////////////////////////////////////////////////////////////
-            /// \brief Plot y with label
-            /// @param y     y vector
-            /// @param label plot label
+            /// \brief Push plot y vs. x with label and linespec
+            /// @param y      y vector
+            /// @param lb     label
+            /// @param ls     line spec
             ////////////////////////////////////////////////////////////////////////////////////////////
-            void plot(const arma::vec& y, const char* label="")
+            template <typename T1>
+            void plot_add( const T1& y, const std::string lb, const std::string ls="lines")
             {
-                arma::vec t(y.size());
-                t = arma::linspace(1,y.size(),y.size());
-                plot(t,y,label);
+                arma::vec x=arma::linspace(0,y.n_elem-1,y.n_elem);
+                plot_data_s pd;
+
+                pd.linespec = ls;
+                pd.label    = lb;
+
+                plotlist.push_back(pd);
+                plot_str2(x,y);
+                plot_ix++;
             }
 
             ////////////////////////////////////////////////////////////////////////////////////////////
-            /// \brief Plot y1 and y2 vs. x with label
-            /// @param x      x vector
-            /// @param y1     y1 vector
-            /// @param y2     y2 vector
-            /// @param label1 plot label 1
-            /// @param label2 plot label 2
+            /// \brief Push multiple plot, each row gives a plot without label
+            /// @param y      y matrix
             ////////////////////////////////////////////////////////////////////////////////////////////
-            void plot( const arma::vec& x, const arma::vec& y1, const arma::vec& y2, const char* label1, const char* label2)
+            void plot_add_mat( const arma::mat& y)
+            {
+                arma::vec x=arma::linspace(0,y.n_cols-1,y.n_cols);
+                plot_data_s pd;
+
+                pd.linespec = "lines";
+                pd.label    = "";
+                for(arma::uword r=0;r<y.n_rows;r++)
+                {
+                    plotlist.push_back(pd);
+                    plot_str2(x,y.row(r));
+                    plot_ix++;
+                }
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////////////////
+            /// \brief Push multiple plot, each row gives a plot with prefix label
+            /// @param y      y matrix
+            /// @param p_lb   Label prefix
+            ////////////////////////////////////////////////////////////////////////////////////////////
+            void plot_add_mat( const arma::mat& y, const std::string p_lb)
+            {
+                arma::vec x=arma::linspace(0,y.n_cols-1,y.n_cols);
+                plot_data_s pd;
+                pd.linespec = "lines";
+
+                for(arma::uword r=0;r<y.n_rows;r++)
+                {
+                    std::ostringstream tmp_s;
+                    tmp_s << p_lb << r;
+                    std::string s = tmp_s.str();
+                    pd.label = s;
+                    plotlist.push_back(pd);
+                    plot_str2(x,y.row(r));
+                    plot_ix++;
+                }
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////////////////
+            /// \brief Show plots
+            ////////////////////////////////////////////////////////////////////////////////////////////
+            void plot_show(void)
             {
                 std::ostringstream tmp_s;
-                send2gp("set key noautotitle");
-                send2gp("set grid");
-                tmp_s << "plot '-' title \"" << label1 << "\" with " << linestyle << ", '-' title \"" << label2 << "\" with " << linestyle;
+
+                tmp_s << "plot $Dxy0 title \"" << plotlist[0].label << "\" with " << plotlist[0].linespec;
+                for(int r=1; r<plot_ix; r++)
+                {
+                    tmp_s << " ,$Dxy" << r <<" title \"" << plotlist[r].label << "\" with " << plotlist[r].linespec;
+                }
                 std::string s = tmp_s.str();
                 send2gp(s.c_str());
-                plot_str2(x,y1);
-                plot_str2(x,y2);
+                plotlist.clear();
+                plot_ix = 0;
             }
 
             ////////////////////////////////////////////////////////////////////////////////////////////
-            /// \brief Plot y1 and y2 with label
-            /// @param y1     y1 vector
-            /// @param y2     y2 vector
-            /// @param label1 plot label 1
-            /// @param label2 plot label 2
+            /// \brief Clear plots
             ////////////////////////////////////////////////////////////////////////////////////////////
-            void plot(const arma::vec& y1, const arma::vec& y2, const char* label1, const char* label2)
+            void plot_clear(void)
             {
-                arma::vec t(y1.size());
-                t = arma::linspace(1,y1.size(),y1.size());
-                plot(t,y1,y2,label1,label2);
+                plotlist.clear();
+                plot_ix = 0;
             }
 
-            ////////////////////////////////////////////////////////////////////////////////////////////
-            /// \brief Scatter plot
-            /// @param x    x vector
-            /// @param y    y vector
-            /// @param label plot label
-            ////////////////////////////////////////////////////////////////////////////////////////////
-            void scatter( const arma::vec& x, const arma::vec& y, const char* label="")
-            {
-                set_linestyle("points");
-                plot(x,y,label);
-            }
-
-            ////////////////////////////////////////////////////////////////////////////////////////////
-            /// \brief Scatter plot - dual
-            /// @param x1     x1 vector
-            /// @param y1     y1 vector
-            /// @param label1 plot label1
-            /// @param x2     x2 vector
-            /// @param y2     y2 vector
-            /// @param label2 plot label2
-            ////////////////////////////////////////////////////////////////////////////////////////////
-            void scatter( const arma::vec& x1, const arma::vec& y1, const char* label1,
-                          const arma::vec& x2, const arma::vec& y2, const char* label2)
-            {
-                set_linestyle("points");
-                std::ostringstream tmp_s;
-                send2gp("set key noautotitle");
-                send2gp("set grid");
-                tmp_s << "plot '-' title \"" << label1 << "\" with " << linestyle << ", '-' title \"" << label2 << "\" with " << linestyle;
-                std::string s = tmp_s.str();
-                send2gp(s.c_str());
-                plot_str2(x1,y1);
-                plot_str2(x2,y2);
-            }
 
             ////////////////////////////////////////////////////////////////////////////////////////////
             /// \brief Plot mat as image
@@ -486,7 +467,7 @@ namespace sp
             }
 
             ////////////////////////////////////////////////////////////////////////////////////////////
-            /// \brief Set linestyle to Matlab 'parula' NB! doesn't work with X11 -terminal
+            /// \brief Set linetype to Matlab 'parula' NB! doesn't work with X11 -terminal
             /// Data from https://github.com/Gnuplotting/gnuplot-palettes
             ////////////////////////////////////////////////////////////////////////////////////////////
             void set_parula_line(void)
@@ -501,7 +482,7 @@ namespace sp
             }
 
             ////////////////////////////////////////////////////////////////////////////////////////////
-            /// \brief Set linestyle to Matlab 'jet' NB! doesn't work with X11 -terminal
+            /// \brief Set linetype to Matlab 'jet' NB! doesn't work with X11 -terminal
             /// Data from https://github.com/Gnuplotting/gnuplot-palettes
             ////////////////////////////////////////////////////////////////////////////////////////////
             void set_jet_line(void)
@@ -515,7 +496,7 @@ namespace sp
                 send2gp("set linetype 7 lc rgb '#3f3f3f' "); // black
             }
             ////////////////////////////////////////////////////////////////////////////////////////////
-            /// \brief Set linestyle to Matlab 'parula' NB! doesn't work with X11 -terminal
+            /// \brief Set linetype to Matlab 'parula' NB! doesn't work with X11 -terminal
             /// Data from https://github.com/Gnuplotting/gnuplot-palettes
             ////////////////////////////////////////////////////////////////////////////////////////////
             void set_set1_line(void)
@@ -690,14 +671,11 @@ namespace sp
 
 
             ////////////////////////////////////////////////////////////////////////////////////////////
-            /// \brief Restore output terminal.
+            /// \brief Reset output terminal.
             ////////////////////////////////////////////////////////////////////////////////////////////
-            void restore_output(void)
+            void reset_term(void)
             {
-                std::ostringstream tmp_s;
-                tmp_s << "set terminal " << term;
-                std::string s = tmp_s.str();
-                send2gp(s.c_str());
+                send2gp("reset session");
             }
 
             ////////////////////////////////////////////////////////////////////////////////////////////
