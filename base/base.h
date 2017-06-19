@@ -17,7 +17,7 @@ namespace sp
     /// \brief A sinc, sin(x)/x, function.
     /// @param x The angle in radians
     ////////////////////////////////////////////////////////////////////////////////////////////
-    double sinc( double x )
+    inline double sinc( double x )
     {
         if(x==0.0)
             return 1.0;
@@ -29,7 +29,7 @@ namespace sp
     /// \brief A sinc, sin(x)/x, function.
     /// @param x The angle in radians
     ////////////////////////////////////////////////////////////////////////////////////////////
-    arma::vec sinc(const arma::vec& x)
+    inline arma::vec sinc(const arma::vec& x)
     {
         arma::vec out;
         out.copy_size(x);
@@ -46,7 +46,7 @@ namespace sp
     /// See bessel functions on [Wikipedia](https://en.wikipedia.org/wiki/Bessel_function)
     /// @param x
     ////////////////////////////////////////////////////////////////////////////////////////////
-    double besseli0( double x )
+    inline double besseli0( double x )
     {
         double y=1.0,s=1.0,x2=x*x;
         int n = 1;
@@ -73,7 +73,7 @@ namespace sp
     /// \brief Calculates angle in radians for complex input.
     /// @param x Complex input vector
     ////////////////////////////////////////////////////////////////////////////////////////////
-    arma::vec angle( const arma::cx_vec& x )
+    inline arma::vec angle( const arma::cx_vec& x )
     {
         arma::vec P;
         P.copy_size(x);
@@ -86,7 +86,7 @@ namespace sp
     /// \brief Calculates angle in radians for complex input.
     /// @param x Complex input matrix
     ////////////////////////////////////////////////////////////////////////////////////////////
-    arma::mat angle( const arma::cx_mat& x )
+    inline arma::mat angle( const arma::cx_mat& x )
     {
         arma::mat P;
         P.copy_size(x);
@@ -100,7 +100,7 @@ namespace sp
     /// \brief Unwraps the angle vector x, accumulates phase.
     /// @param x Complex input vector
     ////////////////////////////////////////////////////////////////////////////////////////////
-    arma::vec unwrap( const arma::vec& x )
+    inline arma::vec unwrap( const arma::vec& x )
     {
         arma::vec P;
         double pacc = 0, pdiff = 0;

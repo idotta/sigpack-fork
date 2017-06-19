@@ -605,7 +605,7 @@ namespace sp
     /// @param M Filter order
     /// @param f0 Filter cutoff frequency in interval [0..1]
     ////////////////////////////////////////////////////////////////////////////////////////////
-    arma::vec fir1(const arma::uword M, const double f0)
+    inline arma::vec fir1(const arma::uword M, const double f0)
     {
         arma::vec b(M+1), h(M+1);
         h = hamming(M+1);
@@ -628,7 +628,7 @@ namespace sp
     /// @param M Filter length
     /// @param fd Fractional delay
     ////////////////////////////////////////////////////////////////////////////////////////////
-    arma::vec fd_filter( const arma::uword M, double fd )
+    inline arma::vec fd_filter( const arma::uword M, double fd )
     {
         arma::vec h(M);
         arma::vec w = blackmanharris(M);
@@ -649,7 +649,7 @@ namespace sp
     /// @param a IIR/AR filter coefficients
     /// @param K Number of evaluation points, Default 512
     ////////////////////////////////////////////////////////////////////////////////////////////
-    arma::cx_vec freq( const arma::vec b, const arma::vec a, const arma::uword K=512)
+    inline arma::cx_vec freq( const arma::vec b, const arma::vec a, const arma::uword K=512)
     {
         arma::cx_vec h(K);
         arma::uword M = b.size();
@@ -675,7 +675,7 @@ namespace sp
     /// @param a IIR/AR filter coefficients
     /// @param K Number of evaluation points, Default 512
     ////////////////////////////////////////////////////////////////////////////////////////////
-    arma::vec freqz( const arma::vec b, const arma::vec a, const arma::uword K=512)
+    inline arma::vec freqz( const arma::vec b, const arma::vec a, const arma::uword K=512)
     {
         arma::cx_vec f = freq(b,a,K);
         return abs(f);
@@ -688,7 +688,7 @@ namespace sp
     /// @param a IIR/AR filter coefficients
     /// @param K Number of evaluation points, Default 512
     ////////////////////////////////////////////////////////////////////////////////////////////
-    arma::vec phasez( const arma::vec b, const arma::vec a, const arma::uword K=512)
+    inline arma::vec phasez( const arma::vec b, const arma::vec a, const arma::uword K=512)
     {
         arma::cx_vec f = freq(b,a,K);
         return angle(f);

@@ -20,7 +20,7 @@ namespace sp
     /// @param N Number of window taps
     /// @param a A vector of cosinus coefficients
     ////////////////////////////////////////////////////////////////////////////////////////////
-    arma::vec cos_win( const arma::uword N, const arma::vec& a )
+    inline arma::vec cos_win( const arma::uword N, const arma::vec& a )
     {
         arma::vec h(N);
         for(arma::uword i=0; i<N; i++)
@@ -37,7 +37,7 @@ namespace sp
     /// \f$ w_i = 0.54-0.46\ cos(2\pi i /(N-1))\f$
     /// @param N Nr of taps
     ////////////////////////////////////////////////////////////////////////////////////////////
-    arma::vec hamming( const arma::uword N )
+    inline arma::vec hamming( const arma::uword N )
     {
         arma::vec a=arma::zeros<arma::vec>(5);
         a[0] = 0.54;
@@ -51,7 +51,7 @@ namespace sp
     /// \f$ w_i = 0.5-0.5\ cos(2\pi i /(N-1))\f$
     /// @param N Nr of taps
     ////////////////////////////////////////////////////////////////////////////////////////////
-    arma::vec hann( const arma::uword N )
+    inline arma::vec hann( const arma::uword N )
     {
         arma::vec a=arma::zeros<arma::vec>(5);
         a[0] = 0.5;
@@ -65,7 +65,7 @@ namespace sp
     /// \f$ w_i = 0.42-0.5\ cos(2\pi i /(N-1))+0.08\ cos(4\pi i /(N-1))\f$
     /// @param N Nr of taps
     ////////////////////////////////////////////////////////////////////////////////////////////
-    arma::vec blackman( const arma::uword N )
+    inline arma::vec blackman( const arma::uword N )
     {
         arma::vec a=arma::zeros<arma::vec>(5);
         a[0] = 0.42; // 7938/18608.0
@@ -81,7 +81,7 @@ namespace sp
     /// \f$ w_i = 0.359-0.488\ cos(2\pi i /(N-1))+0.141\ cos(4\pi i /(N-1))-0.011\ cos(6\pi i /(N-1))\f$
     /// @param N Nr of taps
     ////////////////////////////////////////////////////////////////////////////////////////////
-    arma::vec blackmanharris( const arma::uword N )
+    inline arma::vec blackmanharris( const arma::uword N )
     {
         arma::vec a=arma::zeros<arma::vec>(5);
         a[0] = 0.35875;
@@ -97,7 +97,7 @@ namespace sp
     /// \f$ w_i = 0.216-0.417\ cos(2\pi i /(N-1))+0.277\ cos(4\pi i /(N-1))-0.084\ cos(6\pi i /(N-1))+0.007\ cos(8\pi i /(N-1))\f$
     /// @param N Nr of taps
     ////////////////////////////////////////////////////////////////////////////////////////////
-    arma::vec flattopwin( const arma::uword N )
+    inline arma::vec flattopwin( const arma::uword N )
     {
         arma::vec a=arma::zeros<arma::vec>(5);
         a[0] = 0.21557895;
@@ -114,7 +114,7 @@ namespace sp
     /// \f$ w_i = 0.5-0.5\ cos(2\pi (i+1) /(N+1))\f$
     /// @param N Nr of taps
     ////////////////////////////////////////////////////////////////////////////////////////////
-    arma::vec hanning( const arma::uword N )
+    inline arma::vec hanning( const arma::uword N )
     {
         arma::vec h(N);
         for(arma::uword i=0; i<N; i++)
@@ -131,7 +131,7 @@ namespace sp
     /// @param N Nr of taps
     /// @param beta Beta factor
     ////////////////////////////////////////////////////////////////////////////////////////////
-    arma::vec kaiser( const arma::uword N, double beta )
+    inline arma::vec kaiser( const arma::uword N, double beta )
     {
         arma::vec h(N);
         double bb = besseli0(beta);
@@ -148,7 +148,7 @@ namespace sp
     /// See Triangle window at [Wikipedia](https://en.wikipedia.org/wiki/Window_function#Triangular_window)
     /// @param N Nr of taps
     ////////////////////////////////////////////////////////////////////////////////////////////
-    arma::vec triang( const arma::uword N )
+    inline arma::vec triang( const arma::uword N )
     {
         arma::vec h(N);
         if(N%2)    // Odd
