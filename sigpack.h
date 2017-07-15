@@ -16,11 +16,12 @@
 //  1.1.1   Claes Rolén     2017-01-20  Cleanup, added Kalman and Newton adaptive filters
 //  1.1.2   Claes Rolén     2017-03-07  Added Kalman tracking and control
 //  1.2.1   Claes Rolén     2017-03-13  Updated for Gnuplot 5.0, plot(..) changes to plot_add(..) plus plot_show() 
+//  1.2.2   Claes Rolén     2017-07-13  Added EKF and UKF classes, Non class functions set to arma_inline. 
 
 
 #define SP_VERSION_MAJOR 1
 #define SP_VERSION_MINOR 2
-#define SP_VERSION_PATCH 1
+#define SP_VERSION_PATCH 2
 
 
 #ifndef ARMA_INCLUDES
@@ -66,7 +67,7 @@
 /// \li FFTW support for vector and matrix
 /// \li Simple image I/O (.pbm,.pgm and .ppm formats)
 /// \li Adaptive filters - LMS, N-LMS, RLS, Kalman and Newton
-/// \li Kalman prediction/tracking/control
+/// \li Extended and Unscented Kalman nonlinear filters
 ///
 /// \section install_sec Installation
 /// Download Armadillo and SigPack and install/extract them to your install directory.
