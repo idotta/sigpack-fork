@@ -22,7 +22,7 @@ namespace sp
     ////////////////////////////////////////////////////////////////////////////////////////////
     arma_inline arma::mat eval_fcn( const fcn_v f, const arma::mat& x, const arma::mat& u, const arma::mat& w)
     {
-        arma::mat y(f.size(),1,arma::fill::zeros);
+        arma::mat y((arma::uword)(f.size()),1,arma::fill::zeros);
         for( arma::uword n=0; n<y.n_rows;n++)
             y(n,0)    = f[n](x,u,w);
         return y;
@@ -318,7 +318,7 @@ namespace sp
             void jacobian_diff(arma::mat& _F, fcn_v _f, const arma::mat& _x)
             {
                 arma::uword nC = _F.n_cols;
-                arma::uword nR = _f.size();
+                arma::uword nR = static_cast<arma::uword>(_f.size());
                 arma::mat z0(nC,1,arma::fill::zeros); // Zero matrix, assume dim u and w <= states
 
                 if(nR==0 || nR!=_F.n_rows) err_handler("Function list is empty or wrong size");
@@ -354,7 +354,7 @@ namespace sp
             void jacobian_analytical(arma::mat& _F, fcn_m _f_m, const arma::mat& _x)
             {
                 arma::uword nC = _F.n_cols;
-                arma::uword nR = _f_m.size();
+                arma::uword nR = static_cast<arma::uword>(_f_m.size());
 
                 if(nR==0 || nR!=_F.n_rows) err_handler("Function list is empty or wrong size");
 
@@ -580,7 +580,7 @@ namespace sp
             ////////////////////////////////////////////////////////////////////////////////////////////
             arma::mat ut( const arma::mat& _x, const arma::mat& _P, const fcn_v _f )
             {
-                arma::uword Ny = _f.size();
+                arma::uword Ny = static_cast<arma::uword>(_f.size());
                 arma::mat y(Ny,1);
                 S.set_size(Ny,Ny);
                 C.set_size(N,Ny);

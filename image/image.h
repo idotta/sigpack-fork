@@ -145,7 +145,7 @@ namespace sp
                 }
                 else
                 {
-                    write_header(_type, img.n_rows, img.n_cols, img.max(),info);
+                    write_header(_type, img.n_rows, img.n_cols, (int)img.max(),info);
                     //            get_info();
 
                     // Write data
@@ -200,7 +200,7 @@ namespace sp
                 }
                 else
                 {
-                    write_header(_type, img.n_rows, img.n_cols,img.max(),info);
+                    write_header(_type, img.n_rows, img.n_cols, (int)img.max(),info);
                     //            get_info();
 
                     // Write data
