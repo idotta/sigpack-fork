@@ -609,14 +609,11 @@ namespace sp
     {
         arma::vec b(M+1), h(M+1);
         h = hamming(M+1);
-        double b_sum=0;
         for (arma::uword m=0;m<M+1;m++)
         {
-            b[m] = h[m]*sinc(f0*(m-M/2.0));
-            b_sum += b[m];
+            b[m] = f0*h[m]*sinc(f0*(m-M/2.0));
         }
-        b = b/b_sum;
-        return b;
+        return b/arma::sum(b);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////
@@ -631,13 +628,20 @@ namespace sp
     {
         if(M%2 != 0)
             err_handler("Filter order must be even");
+        arma::vec b(M+1), h(M+1);
+        h = hamming(M+1);
+        for (arma::uword m=0;m<M+1;m++)
+        {
+            b[m] = h[m]*(sinc(m-M/2.0)-f0*sinc(f0*(m-M/2.0)));
+        }
 
-        // Make allpass filter
-        arma::vec ap(M+1,arma::fill::zeros);
-        ap(M/2) = 1.0;
-        arma::vec lp = fir1(M,f0);
+        // Scale
+        std::complex<double> i(0,1);
+        double nrm;
+        arma::vec fv=arma::linspace(0,M,M+1);
+        nrm = abs(arma::sum(exp(-i*fv*PI)%b));
 
-        return ap-lp; // highpass = allpass-lowpass
+        return b/nrm;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////
@@ -645,22 +649,30 @@ namespace sp
     /// FIR design using windows method (hamming window).
     /// NB! Returns size M+1
     /// @return b Filter coefficients \f$ [b_0 ..b_N] \f$
-    /// @param M Filter order (must be even)
+    /// @param M Filter order
     /// @param f0 Filter low cutoff frequency in interval [0..1]
     /// @param f1 Filter high cutoff frequency in interval [0..1]
     ////////////////////////////////////////////////////////////////////////////////////////////
     arma_inline arma::vec fir1_bp(const arma::uword M, const double f0, const double f1)
     {
-        if(M%2 != 0)
-            err_handler("Filter order must be even");
         if(f1<=f0)
             err_handler("Frequencies must be [0 < f0 < f1 < 1]");
 
-        // Make LP/HP filters
-        arma::vec lp0 = fir1(M,f0);
-        arma::vec lp1 = fir1(M,f1);
+        arma::vec b(M+1), h(M+1);
+        h = hamming(M+1);
+        for (arma::uword m=0;m<M+1;m++)
+        {
+            b[m] = h[m]*(f1*sinc(f1*(m-M/2.0))-f0*sinc(f0*(m-M/2.0)));
+        }
 
-        return lp1-lp0; // bandpass = lowpass(f1)-lowpass(f0)
+        // Scale
+        double fc = (f0+f1)/2;
+        std::complex<double> i(0,1);
+        double nrm;
+        arma::vec fv=arma::linspace(0,M,M+1);
+        nrm = abs(arma::sum(exp(-i*fv*PI*fc)%b));
+
+        return b/nrm;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////
@@ -679,14 +691,15 @@ namespace sp
         if(f1<=f0)
             err_handler("Frequencies must be [0 < f0 < f1 < 1]");
 
-        // Make allpass and bandpass filter
-        arma::vec ap(M+1,arma::fill::zeros);
-        ap(M/2) = 1.0;
-        arma::vec bp = fir1_bp(M,f0,f1);
+        arma::vec b(M+1), h(M+1);
+        h = hamming(M+1);
+        for (arma::uword m=0;m<M+1;m++)
+        {
+            b[m] = h[m]*(sinc(m-M/2.0)-f1*sinc(f1*(m-M/2.0))+f0*sinc(f0*(m-M/2.0)));
+        }
 
-        return ap-bp; // bandstop = allpass-bandpass
+        return b/arma::sum(b);
     }
-
 
     ////////////////////////////////////////////////////////////////////////////////////////////
     /// \brief Fractional delay function.
@@ -706,7 +719,7 @@ namespace sp
         {
             h(m) = w(m)*sinc(m-M/2.0-fd);
         }
-        h = h/sum(h);  // Normalize gain
+        h = h/arma::sum(h);  // Normalize gain
 
         return h;
     }
