@@ -598,8 +598,8 @@ namespace sp
     ///
 
     ////////////////////////////////////////////////////////////////////////////////////////////
-    /// \brief FIR design functions.
-    /// FIR design using windows method (hamming window).
+    /// \brief FIR lowpass design function.
+    /// FIR lowpassdesign using windows method (hamming window).
     /// NB! Returns size M+1
     /// @return b Filter coefficients \f$ [b_0 ..b_N] \f$
     /// @param M Filter order
@@ -618,6 +618,75 @@ namespace sp
         b = b/b_sum;
         return b;
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /// \brief FIR highpass design function.
+    /// FIR design using windows method (hamming window).
+    /// NB! Returns size M+1
+    /// @return b Filter coefficients \f$ [b_0 ..b_N] \f$
+    /// @param M Filter order (must be even)
+    /// @param f0 Filter cutoff frequency in interval [0..1]
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    arma_inline arma::vec fir1_hp(const arma::uword M, const double f0)
+    {
+        if(M%2 != 0)
+            err_handler("Filter order must be even");
+
+        // Make allpass filter
+        arma::vec ap(M+1,arma::fill::zeros);
+        ap(M/2) = 1.0;
+        arma::vec lp = fir1(M,f0);
+
+        return ap-lp; // highpass = allpass-lowpass
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /// \brief FIR bandpass design function.
+    /// FIR design using windows method (hamming window).
+    /// NB! Returns size M+1
+    /// @return b Filter coefficients \f$ [b_0 ..b_N] \f$
+    /// @param M Filter order (must be even)
+    /// @param f0 Filter low cutoff frequency in interval [0..1]
+    /// @param f1 Filter high cutoff frequency in interval [0..1]
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    arma_inline arma::vec fir1_bp(const arma::uword M, const double f0, const double f1)
+    {
+        if(M%2 != 0)
+            err_handler("Filter order must be even");
+        if(f1<=f0)
+            err_handler("Frequencies must be [0 < f0 < f1 < 1]");
+
+        // Make LP/HP filters
+        arma::vec lp0 = fir1(M,f0);
+        arma::vec lp1 = fir1(M,f1);
+
+        return lp1-lp0; // bandpass = lowpass(f1)-lowpass(f0)
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /// \brief FIR bandstop design function.
+    /// FIR design using windows method (hamming window).
+    /// NB! Returns size M+1
+    /// @return b Filter coefficients \f$ [b_0 ..b_N] \f$
+    /// @param M Filter order (must be even)
+    /// @param f0 Filter low cutoff frequency in interval [0..1]
+    /// @param f1 Filter high cutoff frequency in interval [0..1]
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    arma_inline arma::vec fir1_bs(const arma::uword M, const double f0, const double f1)
+    {
+        if(M%2 != 0)
+            err_handler("Filter order must be even");
+        if(f1<=f0)
+            err_handler("Frequencies must be [0 < f0 < f1 < 1]");
+
+        // Make allpass and bandpass filter
+        arma::vec ap(M+1,arma::fill::zeros);
+        ap(M/2) = 1.0;
+        arma::vec bp = fir1_bp(M,f0,f1);
+
+        return ap-bp; // bandstop = allpass-bandpass
+    }
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////
     /// \brief Fractional delay function.
