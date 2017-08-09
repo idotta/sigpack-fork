@@ -15,13 +15,14 @@
 //  1.0.8   Claes Rolén     2016-11-15  Added adaptive filters - LMS, N-LMS and RLS. New line plot function of matrix data.
 //  1.1.1   Claes Rolén     2017-01-20  Cleanup, added Kalman and Newton adaptive filters
 //  1.1.2   Claes Rolén     2017-03-07  Added Kalman tracking and control
-//  1.2.1   Claes Rolén     2017-03-13  Updated for Gnuplot 5.0, plot(..) changes to plot_add(..) plus plot_show() 
-//  1.2.2   Claes Rolén     2017-07-13  Added EKF and UKF classes, Non class functions set to arma_inline. 
+//  1.2.1   Claes Rolén     2017-03-13  Updated for Gnuplot 5.0, plot(..) changes to plot_add(..) plus plot_show()
+//  1.2.2   Claes Rolén     2017-07-13  Added EKF and UKF classes, Non class functions set to arma_inline.
+//  1.2.3   Claes Rolén     2017-08-08  Updated FIR design functions, support for highpass, bandpass and bandstop.
 
 
 #define SP_VERSION_MAJOR 1
 #define SP_VERSION_MINOR 2
-#define SP_VERSION_PATCH 2
+#define SP_VERSION_PATCH 3
 
 
 #ifndef ARMA_INCLUDES
