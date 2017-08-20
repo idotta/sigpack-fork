@@ -52,7 +52,7 @@ namespace sp
     arma::vec psd(const arma::Col<T1>& x)
     {
         arma::vec W;
-        W = hanning(x.size());
+        W = hamming(x.size());
         return psd(x,W);
     }
 
@@ -79,7 +79,7 @@ namespace sp
             arma::Col<T1> xk(Nfft);
             arma::vec W(Nfft);
 
-            W = hanning(Nfft);
+            W = hamming(Nfft);
             arma::uword U = floor((N-Noverl)/double(D));
             Pw.set_size(Nfft,U);
             Pw.zeros();
@@ -94,7 +94,7 @@ namespace sp
         else
         {
             arma::vec W(N);
-            W = hanning(N);
+            W = hamming(N);
             Pw.set_size(N,1);
             Pw = spectrum(x,W);
         }
@@ -140,9 +140,9 @@ namespace sp
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////
-    /// \brief Phase spectrum calculation using Welsh's method.
+    /// \brief Phase spectrum calculation using Welch's method.
     ///
-    /// See Welsh's method at [Wikipedia](https://en.wikipedia.org/wiki/Welch%27s_method)
+    /// See Welch's method at [Wikipedia](https://en.wikipedia.org/wiki/Welch%27s_method)
     /// @returns A phase spectrum vector
     /// @param x Input vector
     /// @param Nfft  FFT size
@@ -157,10 +157,10 @@ namespace sp
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////
-    /// \brief Power spectrum calculation using Welsh's method.
+    /// \brief Power spectrum calculation using Welch's method.
     ///
     /// _abs(pwelch(x,Nfft,Noverl))_ is equivalent to Matlab's: _pwelch(x,Nfft,Noverl,'twosided','power')_ <br>
-    /// See Welsh's method at [Wikipedia](https://en.wikipedia.org/wiki/Welch%27s_method)
+    /// See Welch's method at [Wikipedia](https://en.wikipedia.org/wiki/Welch%27s_method)
     /// @returns A power spectrum vector
     /// @param x Input vector
     /// @param Nfft  FFT size

@@ -182,6 +182,14 @@ namespace sp
     /// \brief Misc functions, such as error handling etc.
     /// @{
 
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /// \brief SigPack version string
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    std::string sp_version(void)
+    {
+        return std::to_string(SP_VERSION_MAJOR)+"."+std::to_string(SP_VERSION_MINOR)+"."+std::to_string(SP_VERSION_PATCH);
+    }
+
     ///////////////////////////////////
     // err_handler("Error string")
     //      Prints an error message, waits for input and
