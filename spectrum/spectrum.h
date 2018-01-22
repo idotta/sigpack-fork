@@ -173,6 +173,68 @@ namespace sp
         Pxx = specgram(x,Nfft,Noverl);
         return arma::mean(Pxx,1);
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /// \brief DFT calculation of a single frequency using Goertzel's method.
+    ///
+    /// For more details see [Sysel and Rajmic](https://asp-eurasipjournals.springeropen.com/track/pdf/10.1186/1687-6180-2012-56?site=asp.eurasipjournals.springeropen.com)
+    /// @returns The DFT of frequency f
+    /// @param x Input vector
+    /// @param f Frequency index
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    template <class T1>
+    std::complex<double> goertzel(const arma::Col<T1>& x, const double f)
+    {
+        // Constants
+        arma::uword N = x.size();
+        double      Q = f/N;
+        double      A = PI_2*Q;
+        double      B = 2*cos(A);
+        std::complex<double> C(cos(A),-sin(A));
+        // States
+        T1 s0 = 0;
+        T1 s1 = 0;
+        T1 s2 = 0;
+
+        // Accumulate data
+        for (arma::uword n=0;n<N;n++)
+        {
+            // Update filter
+            s0 = x(n)+B*s1-s2;
+
+            // Shift buffer
+            s2 = s1;
+            s1 = s0;
+        }
+        // Update output state
+        s0 = B*s1-s2;
+
+        // Return the complex DFT output
+        return s0-s1*C;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /// \brief DFT calculation of a vector of frequencies using Goertzel's method.
+    ///
+    /// For more details see [Sysel and Rajmic](https://asp-eurasipjournals.springeropen.com/track/pdf/10.1186/1687-6180-2012-56?site=asp.eurasipjournals.springeropen.com)
+    /// @returns The DFT of frequency f
+    /// @param x Input vector
+    /// @param f Frequency index vector
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    template <class T1>
+    arma::cx_vec goertzel(const arma::Col<T1>& x, const arma::vec f)
+    {
+        arma::uword N = f.size();
+        arma::cx_vec P(N);
+        for (arma::uword n=0;n<N;n++)
+        {
+            P(n) = goertzel(x,f(n));
+        }
+
+        // Return the complex DFT output vector
+        return P;
+    }
+
     /// @}
-} // end namepace
+} // end namespace
 #endif
