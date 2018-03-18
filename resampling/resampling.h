@@ -100,7 +100,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////
     /// \brief Downsampling with anti alias filter.
     ///
-    /// @param x   Input vector
+    /// @param in  Input vector
     /// @param out Output vector
     ////////////////////////////////////////////////////////////////////////////////////////////
     void downfir(const arma::Col<T1>& in, arma::Col<T1>& out)
@@ -117,7 +117,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////
     /// \brief Upsampling with anti alias filter.
     ///
-    /// @param x   Input vector
+    /// @param in  Input vector
     /// @param out Output vector
     ////////////////////////////////////////////////////////////////////////////////////////////
     void upfir(const arma::Col<T1>& in, arma::Col<T1>& out)
@@ -136,7 +136,7 @@ public:
     /// \brief Resampling by a rational P/Q with anti alias filtering.
     ///
     /// The caller needs to allocate the input and output vector so that length(out)==length(in)*P/Q
-    /// @param x   Input vector
+    /// @param in  Input vector
     /// @param out Output vector
     ////////////////////////////////////////////////////////////////////////////////////////////
     void upfirdown(const arma::Col<T1>& in, arma::Col<T1>& out)
