@@ -5,7 +5,6 @@
 #include <fstream>
 #include <bitset>
 
-using namespace std;
 namespace sp
 {
     ///
@@ -64,12 +63,12 @@ namespace sp
             ////////////////////////////////////////////////////////////////////////////////////////////
             void read_header()
             {
-                string str;
+                std::string str;
                 while (ifs >> str ) // Read until we have maxval
                 {
                     // Remove comments
                     size_t mark = str.find_first_of("#");
-                    if ( mark!= string::npos)
+                    if ( mark!= std::string::npos)
                     {
                         ifs.ignore(256, '\n');
                         str.erase(mark, 1);
@@ -113,16 +112,16 @@ namespace sp
             /// @param _maxval   Maxval
             /// @param comments Comments
             ////////////////////////////////////////////////////////////////////////////////////////////
-            void write_header(const imtype _type, const arma::uword _rows, const arma::uword _cols, const int _maxval, const string comments)
+            void write_header(const imtype _type, const arma::uword _rows, const arma::uword _cols, const int _maxval, const std::string comments)
             {
                 type   = _type;
                 rows   = _rows;
                 cols   = _cols;
                 maxval = _maxval;
-                ofs << "P" << type << endl;
-                ofs << "# " << comments << endl;
-                ofs << cols << " " << rows << endl;
-                if(type!=PBM_A || type!=PBM_B) ofs << maxval << endl;
+                ofs << "P" << type << std::endl;
+                ofs << "# " << comments << std::endl;
+                ofs << cols << " " << rows << std::endl;
+                if(type!=PBM_A || type!=PBM_B) ofs << maxval << std::endl;
             }
 
             ////////////////////////////////////////////////////////////////////////////////////////////
@@ -134,13 +133,13 @@ namespace sp
             /// @param img    Image data
             /// @param info   File comments
             ////////////////////////////////////////////////////////////////////////////////////////////
-            bool write(std::string fname, const imtype _type, const arma::cube& img, const string info="")
+            bool write(std::string fname, const imtype _type, const arma::cube& img, const std::string info="")
             {
                 // Open file
-                ofs.open(fname.c_str(), ofstream::binary);
+                ofs.open(fname.c_str(), std::ofstream::binary);
                 if (!ofs.good())
                 {
-                    cout << "Could not open " << fname << endl;
+                    std::cout << "Could not open " << fname << std::endl;
                     return false;
                 }
                 else
@@ -157,7 +156,7 @@ namespace sp
                             for(arma::uword c=0; c<cols; c++)
                             {
                                 ofs << img(r,c,0) << " " << img(r,c,1) << " " << img(r,c,2) << " "; // R G B
-                                if(++i%5==0) ofs << endl; // Max len is 70 chars/line
+                                if(++i%5==0) ofs << std::endl; // Max len is 70 chars/line
                             }
                         }
                     }
@@ -189,13 +188,13 @@ namespace sp
             /// @param img    Image data
             /// @param info   File comments
             ////////////////////////////////////////////////////////////////////////////////////////////
-            bool write(std::string fname, const imtype _type, arma::mat& img, const string info="")
+            bool write(std::string fname, const imtype _type, arma::mat& img, const std::string info="")
             {
                 // Open file
-                ofs.open(fname.c_str(), ofstream::binary);
+                ofs.open(fname.c_str(), std::ofstream::binary);
                 if (!ofs.good())
                 {
-                    cout << "Could not open " << fname << endl;
+                    std::cout << "Could not open " << fname << std::endl;
                     return false;
                 }
                 else
@@ -210,12 +209,12 @@ namespace sp
                         for(arma::mat::iterator ii=img.begin(); ii!=img.end(); ++ii)
                         {
                             ofs << *ii << " ";
-                            if(++i%11==0) ofs << endl; // Max len is 70 chars/line
+                            if(++i%11==0) ofs << std::endl; // Max len is 70 chars/line
                         }
                     }
                     else if(type == PBM_B) // Raw .pbm
                     {
-                        bitset<8> b;
+                        std::bitset<8> b;
                         for(arma::uword r=0; r<rows; r++)
                             for(arma::uword c=0; c<cols; c++)
                             {
@@ -265,10 +264,10 @@ namespace sp
             ////////////////////////////////////////////////////////////////////////////////////////////
             void get_info()
             {
-                cout << "Type:  P"  << type   << endl;
-                cout << "cols:   "  << cols   << endl;
-                cout << "rows:   "  << rows   << endl;
-                if(type==PGM_A || type==PGM_B) cout << "Maxval: "  << maxval << endl;
+                std::cout << "Type:  P"  << type   << std::endl;
+                std::cout << "cols:   "  << cols   << std::endl;
+                std::cout << "rows:   "  << rows   << std::endl;
+                if(type==PGM_A || type==PGM_B) std::cout << "Maxval: "  << maxval << std::endl;
             }
 
             ////////////////////////////////////////////////////////////////////////////////////////////
@@ -312,10 +311,10 @@ namespace sp
             bool read(std::string fname, arma::cube& img)
             {
                 // Open file
-                ifs.open(fname.c_str(), ifstream::binary);
+                ifs.open(fname.c_str(), std::ifstream::binary);
                 if (!ifs.good())
                 {
-                    cout << "Could not open " << fname << endl;
+                    std::cout << "Could not open " << fname << std::endl;
                     return false;
                 }
                 else
@@ -328,13 +327,13 @@ namespace sp
                     // Get the data
                     if (type==PPM_A )  // Plain .PPM
                     {
-                        string str;
+                        std::string str;
                         arma::uword i=0;
                         while (ifs >> str && r<rows ) // Read until eof
                         {
                             // Remove comments
                             size_t mark = str.find_first_of("#");
-                            if ( mark!= string::npos)
+                            if ( mark!= std::string::npos)
                             {
                                 ifs.ignore(256, '\n');
                                 str.erase(mark, 1);
@@ -382,10 +381,10 @@ namespace sp
             bool read(std::string fname, arma::mat& img)
             {
                 // Open file
-                ifs.open(fname.c_str(), ifstream::binary);
+                ifs.open(fname.c_str(), std::ifstream::binary);
                 if (!ifs.good())
                 {
-                    cout << "Could not open " << fname << endl;
+                    std::cout << "Could not open " << fname << std::endl;
                     return false;
                 }
                 else
@@ -398,12 +397,12 @@ namespace sp
                     // Get the data
                     if (type==PBM_A || type == PGM_A)  // Plain .PGM or .PBM
                     {
-                        string str;
+                        std::string str;
                         while (ifs >> str && r<rows ) // Read until eof
                         {
                             // Remove comments
                             size_t mark = str.find_first_of("#");
-                            if ( mark!= string::npos)
+                            if ( mark!= std::string::npos)
                             {
                                 ifs.ignore(256, '\n');
                                 str.erase(mark, 1);
@@ -425,7 +424,7 @@ namespace sp
                         unsigned char ch;
                         while (ifs.read(reinterpret_cast<char*>(&ch),1) && r<rows)  // Read until eof
                         {
-                            bitset<8> pix(ch);
+                            std::bitset<8> pix(ch);
                             for(int b=7; b>=0; b--)
                             {
                                 img(r,c) = pix[b];
