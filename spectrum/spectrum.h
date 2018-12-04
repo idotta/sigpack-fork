@@ -22,7 +22,8 @@ namespace sp
     arma::cx_vec spectrum(const arma::Col<T1>& x, const arma::vec& W)
     {
         arma::cx_vec Pxx(x.size());
-        double wc = sum(W);     // Window correction factor
+        //double wc = sum(W);     // Window correction factor
+		double wc = mean(W);     // Window correction factor
         Pxx = fft(x % W)/wc;    // FFT calc
         return Pxx;
     }
